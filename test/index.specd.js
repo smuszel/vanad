@@ -35,3 +35,12 @@ test('displays placeholder and no dropdown by default', async t => {
 
     t.assert(!dropdown);
 });
+
+test('clicking on box makes the dropdown appear', async t => {
+    const page = await getPage();
+    await page.waitForSelector(selectors.emptyInputBox);
+    await page.click(emptyInputBox);
+    await page.waitForSelector(selectors.dropdown);
+
+    t.pass();
+});
