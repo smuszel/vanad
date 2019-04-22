@@ -1,3 +1,6 @@
+const selectors = require('./selectors');
+
 module.exports = {
-    x: st => st.n === 1
+    seePlaceholder: page => page.$(selectors.emptyInputBox),
+    seeDropdown: page => page.$(selectors.dropdown)
 } 
