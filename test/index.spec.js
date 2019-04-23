@@ -1,6 +1,8 @@
 import assertions from './assertions';
 import states from './states';
 import test from 'ava';
+import * as R from 'ramda';
+// inner join from ramda eliminates need for filer + includes
 
 const I = R.map(R.then)(assertions);
 const during = R.map(R.then(f => f(browser)))(states);
