@@ -23,9 +23,15 @@
         "webpack-cli": "3.3.0",
         "webpack-dev-server": "3.3.1"
     },
+    "dependencies": {
+        "ramda": "^0.26.1"
+    },
     "babel": {
         "presets": [
             "@babel/preset-react"
         ]
+    },
+    "ava": {
+        "require": ["./test/register"]
     }
 }
