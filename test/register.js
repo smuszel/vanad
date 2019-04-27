@@ -7,8 +7,7 @@ const ppr = require('puppeteer');
 // } : {};
 
 // console.log(argv);
-console.log(process.argv);
+// console.log(process.argv);
 
 const browser = ppr.launch({});
-
-module.exports = browser;
+global.browser = browser;

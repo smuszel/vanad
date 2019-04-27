@@ -32,6 +32,8 @@
         ]
     },
     "ava": {
-        "require": ["./test/register"]
+        "require": [
+            "./test/register"
+        ]
     }
 }

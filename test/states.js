@@ -1,4 +1,5 @@
 const selectors = require('./selectors');
+const { addNameMeta } = require('./util');
 
 const initial = async browser => {
     const page = await browser.newPage();
@@ -19,3 +20,4 @@ module.exports = {
     initial,
     // clikedOnBox: clikedOnBox(),
 }
+addNameMeta(module.exports);
