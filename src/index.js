@@ -1,4 +1,4 @@
-import S3 from './Select3';
+import Main from './Main';
 import React from 'react';
 import ReactDOM, { render } from 'react-dom';
 
@@ -6,5 +6,5 @@ window['React'] = React;
 window['ReactDOM'] = ReactDOM;
 
 const container = document.createElement('div');
-render(<S3 />, container);
+render(<Main />, container);
 document.body.appendChild(container);

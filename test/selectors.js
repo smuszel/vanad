@@ -1,10 +1,17 @@
 const cn = require('../src/classNames');
 const dot = str => `.${str}`;
+const { map } = require('ramda');
 
-module.exports = {
-    reactRoot: 'div',
-    component: dot(cn.component),
-    inputBox: dot(cn.inputBox),
-    emptyInputBox: dot(cn.inputBox) + ':placeholder-shown',
-    dropdown: dot(cn.dropdown)
-}
+/** @type {typeof cn} */
+const dotted = map(dot, cn);
+const derived = {
+    disabledXhrButton: dotted.xhrButton + ':disabled',
+    enabledXhrButton: dotted.xhrButton + ':not(:disabled)',
+    disabledNumberInput: dotted.numberInput + ':disabled',
+    enabledNumberInput: dotted.xhrButton + ':not(:disabled)',
+    placeholderNumberInput: dotted.numberInput + ':placeholder-shown',
+    emptyTextField: dotted.textField + ':empty',
+    filledTextField: dotted.textField + ':not(:empty)'
+};
+
+module.exports = { ...dotted, ...derived };

@@ -1,12 +1,18 @@
 // @ts-check
-import _test from './wrapper';
-import I from './assertions';
-import during from './states';
-
+require('./register');
+const _test = require('./wrapper');
+const I = require('./assertions');
+const during = require('./states');
+const sel = require('./selectors');
 const test = _test(global['browser']);
 
-test(I.seePlaceholder, during.initial);
-test(I.dont.seeDropdown, during.initial);
+test(I.see(sel.bootstrapped), during.initial);
+test(I.see(sel.placeholderNumberInput), during.initial);
+test(I.see(sel.disabledXhrButton), during.initial);
+test(I.see(sel.emptyTextField), during.initial);
+
+// test(I.seeEn)
+// test(I.dont.seeDropdown, during.initial);
 
 // test('I see box with placeholder by default', async t => {
 //     t.assert(await I.seePlaceholder(during.initial));

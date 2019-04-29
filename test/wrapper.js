@@ -1,13 +1,22 @@
-const test = require('ava');
 const cache = {};
+let n = 0;
 
-module.exports = browser => (assertion, stateFactory) => {
+const test = (title, f) => {
+    f(v => {
+        if (v) {
+            n++
+        } else {
+            throw `test failed ${title}`;
+        }
+    }).then(() => console.log(n));
+}
+
+module.exports = browser => (pair, stateFactory) => {
+    const [assertion, titleFrag] = pair;
     const name = stateFactory.__NAME__;
-    const title = `I ${assertion.__NAME__} during ${name}`;
+    const title = `${titleFrag} during ${name}`;
     const state = cache[name] || browser.then(b => stateFactory(b));
-    const f = async t => {
-        t.assert(await assertion(await state));
-    };
+    const f = async assert => assert(await assertion(await state));
 
     cache[name] = state;
     test(title, f);
