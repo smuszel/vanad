@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    const reactroot = document.createElement('div');
+    const button = document.createElement('button');
+    const respText = document.createElement('textarea');
+    respText.value = 'abc';
+    reactroot.className = 'reactroot';
+    button.innerText = 'click me';
+    button.addEventListener('click', () => {
+        button.disabled = true;
+        setTimeout(() => {
+            reactroot.appendChild(respText)
+        }, 2000);
+    });
+    reactroot.appendChild(button);
+    document.body.appendChild(reactroot);
+</script>
+</html>

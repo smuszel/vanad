@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "checkJs": false,
+        "jsx": "react",
+        "outDir": "./dist",
+        "lib": ["dom", "esnext"]
+    }
+}
