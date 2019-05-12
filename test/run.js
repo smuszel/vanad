@@ -38,6 +38,7 @@ Promise.all(tests.map(run))
 
 
     // refactor runner
+    // refactor test declarations
     // use .env
     // use workers/threads
     // use register
