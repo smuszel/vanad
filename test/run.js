@@ -1,9 +1,7 @@
-const states = require('./states');
 const tests = require('./test.spec');
 const ppr = require('puppeteer');
 const { cyan, green, red } = require('chalk').default;
 const browser = ppr.launch();
-
 
 const run = async ({ resolver, description, selectors }) => {
     const state = resolver(await browser);
@@ -37,3 +35,11 @@ Promise.all(tests.map(run))
     })
     .catch(console.log)
     .then(() => process.exit())
+
+
+    // refactor runner
+    // use .env
+    // use workers/threads
+    // use register
+    // add selector lib
+    // refactor utlis

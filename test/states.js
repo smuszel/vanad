@@ -1,67 +1,40 @@
-const selectors = require('./selectors');
-const { addNameMeta } = require('./util');
+const sel = require('./selectors');
+const rootUrl = 'http://localhost:5500/';
 
 const initial = async browser => {
     /** @type {import('puppeteer').Page} */
-    const page = await browser.newPage();
-    await page.goto('http://localhost:8081/');
-    await page.waitForSelector(selectors.bootstrapped);
+    const page = await (await browser).newPage();
+    await page.goto(rootUrl);
+    await page.waitForSelector(sel.bootstrapped);
 
-    return page;
+    return { page, browser, label: '' };
+}
+
+const afterClick = async browser => {
+    const state = await initial(browser);
+    const { page } = state;
+    await page.click(sel.button);
+
+    return { ...state, page };
 };
 
-const typedNumber = async browser => {
-    const page = await initial(browser);
-    await page.type(selectors.numberInput, '10');
-
-    return page;
-};
-
-const clickedXhr = async browser => {
-    const page = await typedNumber(browser);
-    await page.click(selectors.xhrButton);
-    await xhrStart(page);
-    
-    return page;
-};
-
-const afterXhr = async browser => {
-    const page = await clickedXhr(browser);
-    await xhrEnd(page);
-
-    return page;
-};
-
-clearedOutNumberInput = async browser => {
-    const page = await afterXhr(browser);
-    page.click(selectors.numberInput, { clickCount: 3 });
-    await page.keyboard.press('Backspace');
-
-    return page;
-};
-
-typedOtherNumber = async browser => {
-    const page = await clearedOutNumberInput(browser);
-    page.type(selectors.numberInput, '11');
-
-    return page;
-};
-
-typedOldNumber = async browser => {
-    const page = await clearedOutNumberInput(browser);
-    page.type(selectors.numberInput, '10');
-
-    return page;
-};
-    
-module.exports = {
+const obj = {
     initial,
-    // typedNumber,
-    // clickedXhr,
-    // afterXhr,
-    // afterXhrClear,
-    // afterClearOldNumber,
-    // afterClearOtherNumber
-};
+    afterClick
+}
 
-addNameMeta(module.exports);
+const f = () => {
+    /** @type {typeof obj} */
+    const res = {};
+    Object.keys(obj).forEach(label => {
+        res[label] = async _browser => {
+            const browser = await _browser;
+            const o = await obj[label](browser);
+            return { ...o, label }
+        }
+    });
+
+    return res;
+}
+
+module.exports = f()
