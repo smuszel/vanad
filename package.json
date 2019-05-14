@@ -2,35 +2,29 @@
     "version": "0.0.1",
     "main": "index.js",
     "scripts": {
-        "start": "webpack-dev-server --mode=development --progress",
-        "test": "node ./test/run.js"
+        "start": "node ./src/cli.js",
+        "start:d": "node --inspect-brk ./src/cli.js"
     },
     "author": "stmu",
     "license": "ISC",
+    "dependencies": {
+        "ramda": "^0.26.1",
+        "chalk": "^2.4.2",
+        "puppeteer": "1.16.0",
+        "dotenv": "8.0.0",
+        "glob": "7.1.4",
+        "yargs": "13.2.4"
+    },
     "devDependencies": {
-        "@babel/core": "7.4.3",
-        "@babel/preset-react": "7.0.0",
-        "@babel/register": "7.4.0",
         "@types/chalk": "^2.2.0",
         "@types/puppeteer": "^1.12.4",
-        "babel-loader": "8.0.5",
-        "chalk": "^2.4.2",
-        "css-loader": "2.1.1",
-        "html-webpack-plugin": "3.2.0",
-        "puppeteer": "^1.14.0",
-        "react": "16.8.6",
-        "react-dom": "16.8.6",
-        "style-loader": "0.23.1",
-        "webpack": "4.30.0",
-        "webpack-cli": "3.3.0",
-        "webpack-dev-server": "3.3.1"
+        "@types/node": "12.0.1",
+        "@types/ramda": "0.26.8",
+        "@types/dotenv": "6.1.1",
+        "@types/yargs": "13.0.0",
+        "@types/glob": "7.1.1"
     },
-    "dependencies": {
-        "ramda": "^0.26.1"
-    },
-    "babel": {
-        "presets": [
-            "@babel/preset-react"
-        ]
+    "engines": {
+        "node": ">=12.0.0"
     }
 }
