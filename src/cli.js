@@ -1,53 +1,45 @@
 const { Worker, isMainThread, workerData } = require('worker_threads');
+const cwd = process.cwd();
 
 const bootstrap = async () => {
     const config = require('./dotenv');
     const glob = require('glob');
 
-    const resolveWorker = workerData => new Promise(rez => {
-        const worker = new Worker(__filename, { workerData });
-        worker.on('close', rez);
-    });
-
     const argv = require('yargs')
         .option('debug', { alias: 'd' })
         .option('slug', { alias: 's', default: 'hotfix' })
         .option('credentials', { alias: 'c', required: true })
-        // .option('pool', { alias: 'p', default: false })
         .config(config)
         .argv;
-    // console.log(argv);
+    
+    const pathPattern = argv._[0] || './test/**/*.spec.js';
     
     if (argv.debug) {
-        throw 'ni'
+        runner({ browserMode: 'remote', sf: argv._[0] });
     } else {
-        const specFiles = await new Promise(rez => {
-            glob('../test/**/*.spec.js', { cwd: __dirname }, (err, matches) => rez(matches));
+        const resolveWorker = workerData => new Promise(rez => {
+            const worker = new Worker(__filename, { workerData });
+            worker.on('close', rez);
         });
 
-        // console.log(specFiles);
+        const specFiles = await new Promise(rez => {
+            glob(pathPattern, { cwd }, (err, matches) => rez(matches));
+        });
 
         const work = specFiles.map(sf => {
             return resolveWorker({ ...argv, sf })
         });
-        
 
-        Promise.all(work)
+        return Promise.all(work);
     }
 }
 
 const runner = (data = workerData) => {
     const tests = require(data.sf);
-    const run = require('./run');
-    run(tests).then(() => process.exit())
-    // require(data.scriptPath)(data);
+    const run = require('./run')();
+    const browserMode = data.browserMode || 'headless';
+    
+    return run({ tests, browserMode });
 }
 
-// const main = async () => {
-//     const fx = Array(1).fill(undefined).map(run);
-//     await Promise.all(fx);
-
-//     process.exit();
-// }
-
-isMainThread ? bootstrap() : runner();
+(isMainThread ? bootstrap() : runner()).then(() => process.exit());
