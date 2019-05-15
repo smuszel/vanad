@@ -1,5 +1,7 @@
 const ppr = require('puppeteer');
 const { cyan, green, red } = require('chalk').default;
+const browserURL = 'http://localhost:9222';
+const defaultViewport = { width: 0, height: 0 };
 
 const modes = {
     headless: () => ppr.launch(),

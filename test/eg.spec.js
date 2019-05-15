@@ -10,7 +10,6 @@ const initial = async browser => {
     /** @type {import('puppeteer').Page} */
     const page = await (await browser).newPage();
     await page.goto(rootUrl);
-    await page.waitForSelector(sel.bootstrapped);
 
     return { page };
 }

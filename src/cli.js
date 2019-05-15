@@ -1,5 +1,6 @@
 const { Worker, isMainThread, workerData } = require('worker_threads');
 const cwd = process.cwd();
+const path = require('path');
 
 const bootstrap = async () => {
     const config = require('./dotenv');
@@ -15,7 +16,7 @@ const bootstrap = async () => {
     const pathPattern = argv._[0] || './test/**/*.spec.js';
     
     if (argv.debug) {
-        runner({ browserMode: 'remote', sf: argv._[0] });
+        return runner({ browserMode: 'remote', sf: argv._[0] });
     } else {
         const resolveWorker = workerData => new Promise(rez => {
             const worker = new Worker(__filename, { workerData });
@@ -35,8 +36,10 @@ const bootstrap = async () => {
 }
 
 const runner = (data = workerData) => {
-    const tests = require(data.sf);
-    const run = require('./run')();
+    const p = path.join(cwd, data.sf);
+    console.log(p);
+    const tests = require(p);
+    const run = require('./run');
     const browserMode = data.browserMode || 'headless';
     
     return run({ tests, browserMode });
