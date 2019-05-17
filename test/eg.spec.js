@@ -1,4 +1,4 @@
-const { selectorsPresence } = require('./util');
+const { selectorsPresence } = require('../util');
 const rootUrl = 'http://localhost:5500/';
 
 const sel = {
