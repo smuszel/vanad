@@ -3,12 +3,19 @@
     "configurations": [
 
         {
-            "name": "Launch",
+            "name": "Test Runner",
             "type": "node",
             "request": "launch",
-            "args": ["--inspect-brk=43162", "${file}", "-d"],
+            "args": ["--inspect-brk=43162", "./src/cli.js", "-d"],
             "port": 43162
-        }
+        },
+        {
+            "name": "File",
+            "type": "node",
+            "request": "launch",
+            "args": ["--inspect-brk=43162", "${file}"],
+            "port": 43162
+        },
         
     ]
 }
