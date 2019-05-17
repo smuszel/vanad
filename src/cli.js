@@ -41,15 +41,3 @@ const runner = (data = workerData) => {
 }
 
 (isMainThread ? bootstrap() : runner()).then(() => process.exit());
-
-// suite
-// // test
-// // // testcase
-// suiteStart
-// suiteFailure
-// suiteSuccess
-
-
-// a labelA -> labelB -> labelC
-// b
-// c
