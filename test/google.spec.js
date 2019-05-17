@@ -3,19 +3,14 @@ const sel = {
     searchInput: 'input[title="Search"]'
 }
 
-const gotoGoogle = async browser => {
+const onArrive = () => ({
+    label: 'When I arrive at google',
+});
+
+module.exports = async function* (browser) {
     /** @type {import('puppeteer').Page} */
     const page = await browser.newPage();
     await page.goto('https://www.google.com/');
     await page.waitForSelector(sel.searchButton);
-
-    return { page };
+    yield onArrive(page);
 }
-
-module.exports = [
-    {
-        description: 'When I arrive',
-        resolver: gotoGoogle,
-        selectors: [sel.searchButton, sel.searchInput]
-    }
-];
