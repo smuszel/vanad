@@ -1,3 +1,4 @@
+const { selectorsPresence } = require('./util');
 const rootUrl = 'http://localhost:5500/';
 
 const sel = {
@@ -6,11 +7,21 @@ const sel = {
     textResponse: 'textarea'
 }
 
-module.exports = [async function* (browser) {
+const onArrive = page => ({
+    label: 'I arrived at XYZ',
+    expect: selectorsPresence(page, [sel.button])
+});
+
+const afterClick = page => ({
+    label: 'I clicked xhr button',
+    expect: selectorsPresence(page, [sel.disabledButton])
+});
+
+module.exports = async function* (browser) {
     /** @type {import('puppeteer').Page} */
     const page = await (await browser).newPage();
     await page.goto(rootUrl);
-    yield['I arrived at XYZ', [sel.button], page];
+    yield onArrive(page);
     await page.click(sel.button);
-    yield['I clicked xhr button', [sel.textResponse, sel.disabledButton], page];
-}];
+    yield afterClick(page);
+};

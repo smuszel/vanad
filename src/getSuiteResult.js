@@ -1,5 +1,4 @@
 const ppr = require('puppeteer');
-const { cyan, green, red } = require('chalk').default;
 const browserURL = 'http://localhost:9222';
 const defaultViewport = { width: 0, height: 0 };
 
@@ -8,51 +7,30 @@ const modes = {
     remote: () => ppr.connect({ browserURL, defaultViewport })
 };
 
-const _getTestcaseResults = browser => async ({ resolver, description, selectors }) => {
-    const selPromises = selectors.map(sel => {
-        return page.waitForSelector(sel, { timeout: 3000 })
-            .then(() => ({ err: false, sel }))
-            .catch(err => ({ err, sel }));
-    });
-    const stateResults = await Promise.all(selPromises);
+const consume = (f, it) => new Promise(rez => {
+    const acc = [];
 
-    return { description, stateResults };
-};
+    const inner = () => {
+        it.next().then(async v => {
+            !v.done && acc.push(v.value);
+            !v.done && await f(v.value);
+            return !v.done ? inner() : rez(acc);
+        })
+    }
 
-module.exports = async ({ browserMode, tests }) => {
-    const browser = await modes[browserMode]();
-    const testIterators = tests.map(t => {
-        const it = t(browser);
-        return it.next();
-        // return Array.from()
-    });
+    return inner();
+});
 
-    console.log(await Promise.all(testIterators));
-
-    // const getTestcaseResults = _getTestcaseResults(browser);
-    // const suiteResults = Promise.all(tests.map(getTestcaseResults));
-
-    // return suiteResults;
+const checkStep = async step => {
+    const failMessage = step.expect && await step.expect();
+    const msg = failMessage && `${failMessage} during ${step.label}`;
+    
+    msg && console.log(msg);
 }
 
+module.exports = async ({ browserMode, testGenerator }) => {
+    const browser = await modes[browserMode]();
+    const steps = await consume(checkStep, testGenerator(browser));
 
-// } Promise.all(tests.map(run(modes[browserMode]())))
-//     .then(suiteResults => {
-//         });
-//         formattedResults.forEach(fr => {
-//             console.log(fr.txt);
-//             fr.errs.length && fr.errs.forEach(err => console.log(err))
-//         });
-//     })
-//     .catch(console.log)
-
-
-        // const formattedResults = suiteResults.map(sr => {
-        //     const header = `${cyan(sr.description)} I should see:`;
-        //     const units = sr.stateResults.map(r => {
-        //         const txt = `* ${r.sel}`;
-        //         return { txt: r.err ? red(txt) : green(txt), err: r.err };
-        //     });
-        //     const txt = `${header}\n${units.map(xs => xs.txt).join('\n')}`;
-        //     const errs = units.map(u => u.err).filter(Boolean);
-        //     return { txt, errs };
+    console.log(steps.map(s => s.label));
+};

@@ -14,33 +14,30 @@ const bootstrap = async () => {
         .argv;
     
     const pathPattern = argv._[0] || './test/**/*.spec.js';
-    
-    if (argv.debug) {
-        return runner({ browserMode: 'remote', sf: argv._[0] });
-    } else {
-        const resolveWorker = workerData => new Promise(rez => {
-            const worker = new Worker(__filename, { workerData });
-            worker.on('close', rez);
-        });
 
-        const specFiles = await new Promise(rez => {
-            glob(pathPattern, { cwd }, (err, matches) => rez(matches));
-        });
+    const resolveWorker = workerData => new Promise(rez => {
+        const worker = new Worker(__filename, { workerData });
+        worker.on('close', rez);
+    });
 
-        const work = specFiles.map(sf => {
-            return resolveWorker({ ...argv, sf })
-        });
+    const specFiles = await new Promise(rez => {
+        glob(pathPattern, { cwd }, (err, matches) => rez(matches));
+    });
 
-        return Promise.all(work);
-    }
+    const work = specFiles.map(sf => {
+        const f = argv.debug ? runner : resolveWorker;
+        return f({ ...argv, sf });
+    });
+
+    return Promise.all(work);
 }
 
 const runner = (data = workerData) => {
-    const tests = require(path.join(cwd, data.sf));
+    const testGenerator = require(path.join(cwd, data.sf));
     const getSuiteResult = require('./getSuiteResult');
     const browserMode = data.browserMode || 'headless';
     
-    return getSuiteResult({ tests, browserMode });
+    return getSuiteResult({ testGenerator, browserMode });
 }
 
 (isMainThread ? bootstrap() : runner()).then(() => process.exit());
