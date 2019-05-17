@@ -36,13 +36,23 @@ const bootstrap = async () => {
 }
 
 const runner = (data = workerData) => {
-    const p = path.join(cwd, data.sf);
-    console.log(p);
-    const tests = require(p);
-    const run = require('./run');
+    const tests = require(path.join(cwd, data.sf));
+    const getSuiteResult = require('./getSuiteResult');
     const browserMode = data.browserMode || 'headless';
     
-    return run({ tests, browserMode });
+    return getSuiteResult({ tests, browserMode });
 }
 
 (isMainThread ? bootstrap() : runner()).then(() => process.exit());
+
+// suite
+// // test
+// // // testcase
+// suiteStart
+// suiteFailure
+// suiteSuccess
+
+
+// a labelA -> labelB -> labelC
+// b
+// c
