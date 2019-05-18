@@ -2,8 +2,7 @@
     "version": "0.0.1",
     "main": "index.js",
     "scripts": {
-        "start": "node ./src/cli.js",
-        "start:d": "node --inspect-brk ./src/cli.js"
+        "test": "node ./test/index.js"
     },
     "author": "stmu",
     "license": "ISC",
@@ -20,6 +19,8 @@
         "yargs": "^13.2.4"
     },
     "devDependencies": {
+        "express": "4.17.0",
+        "@types/express": "4.16.1",
         "@types/chalk": "^2.2.0",
         "@types/dotenv": "6.1.1",
         "@types/glob": "7.1.1",
