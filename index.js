@@ -1,2 +1,2 @@
-module.exports.runner = () => require('./src/cli');
-module.exports.util = require('./util');
+module.exports.ppr = require('./src/bootstrap');
+module.exports.util = require('./src/util');

@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+const config = require('./dotenv');
+const glob = require('glob');
+const cwd = process.cwd();
+const path = require('path');
+const bootstrap = require('../src/bootstrap');
+
+const main = async () => {
+    const argv = require('yargs')
+        .option('debug', { alias: 'd', default: false })
+        .option('data', { alias: 't', default: {} })
+        .option('mode', { alias: 'm', default: 'headless' })
+        .option('verbosity', { alias: 'v', default: 'silent' })
+        .config(config)
+        .argv;
+    
+    const pathPattern = argv._[0] || './test/**/*.spec.js';
+    
+    const specFileMatches = await new Promise(rez => {
+        glob(pathPattern, { cwd }, (err, matches) => {
+            rez(matches.map(m => ({ testName: path.basename(m), testPath: m })))
+        });
+    });
+
+    await bootstrap({ specFileMatches, ...argv });
+    process.exit();
+}
+
+main();

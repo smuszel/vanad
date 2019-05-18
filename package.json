@@ -7,6 +7,9 @@
     },
     "author": "stmu",
     "license": "ISC",
+    "bin": {
+        "ppr": "./bin/cli"
+    },
     "dependencies": {
         "chalk": "^2.4.2",
         "dotenv": "^8.0.0",
