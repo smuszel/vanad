@@ -17,13 +17,16 @@ const main = async () => {
     
     const pathPattern = argv._[0] || './test/**/*.spec.js';
     
-    const specFileMatches = await new Promise(rez => {
+    const specFiles = await new Promise(rez => {
         glob(pathPattern, { cwd }, (err, matches) => {
-            rez(matches.map(m => ({ testName: path.basename(m), testPath: m })))
+            rez(matches.map(m => ({
+                name: path.basename(m),
+                path: path.join(cwd, m)
+            })))
         });
     });
 
-    await bootstrap({ specFileMatches, ...argv });
+    await bootstrap({ specFiles, ...argv });
     process.exit();
 }
 

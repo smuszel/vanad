@@ -1,10 +1,12 @@
 /** @type {LoggerDict} */
 const loggers = {
     basic: {
-        testStarted: (test) => console.log(test.name),
-        testEnded: (test) => console.log(test.name),
+        testStarted: (test) => console.log('started: ' + test.name),
+        testEnded: (test) => console.log('finished: ' + test.name),
         stepResolved: (stepTest, err) => {
-            console.log(stepTest.test.name + ' > ' + stepTest.step.label, (err && err.value) || '');
+            const base = stepTest.test.name + ' > ' + stepTest.step.label;
+            const errMsg = err && err.value ? 'fails for ' + err.value : '';
+            console.log(base + ' ' + errMsg);
         }
     },
     silent: {
