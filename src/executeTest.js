@@ -4,13 +4,13 @@ const getLogger = require('./eventLoggers');
 
 /** @param {TestExecutionOptions} options */
 module.exports = async (options) => {
-    /** @type {TestFactory} */
-    const testFactory = require(options.testPath);
+    /** @type {TestFactory<any>} */
+    const testFactory = require(options.path);
     const logger = getLogger[options.verbosity];
     const browser = await getBrowser(options.mode);
-    const test = testFactory(browser, options.data);
-    Reflect.defineProperty(test, 'name', { value: options.testName });
-    const it = test();
+    const testGen = testFactory(browser, options.data);
+    const test = { name: options.name, gen: testGen };
+    const it = test.gen();
 
     logger.testStarted(test);
     await consume(async step => {

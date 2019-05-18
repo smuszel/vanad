@@ -5,6 +5,15 @@ declare type Dict<K, T> = { [k in K]: T }
 declare type LoggerDict = Dict<Verbosity, Logger>
 
 declare type Browser = import('puppeteer').Browser;
+declare type Page = import('puppeteer').Page;
+
+declare type Query = () => Promise<QueryFailure?>
+declare type QueryFactory<A, B> = (a: A, b: B) => Query
+
+declare interface QueryFailure {
+    type: string,
+    value: any
+}
 
 declare interface Logger {
     testStarted: (test: Test) => void,
@@ -14,12 +23,12 @@ declare interface Logger {
 
 declare interface Step {
     label: string,
-    expect: () => Promise<ExpectationFailure?>
+    expect?: Query
 }
 
 declare interface Test {
     name: string,
-    (): AsyncIterableIterator<Step>
+    gen: TestGen
 }
 
 declare interface StepTest {
@@ -27,20 +36,25 @@ declare interface StepTest {
     test: Test
 }
 
-declare type TestFactory = (browser: Browser, data: any) => Test
+declare type TestFactory<T> = (browser: Browser, data: T) => TestGen
 
-declare interface ExpectationFailure {
-    test: Test
-    step: Step,
-    value: any
-}
+declare type TestGen = () => AsyncIterableIterator<Step>
 
-declare interface TestExecutionOptions {
+declare interface RunnerConfig<T> {
     verbosity: Verbosity
     mode: BrowserMode
-    data: any
-    testPath: string
-    testName: string
+    debug: boolean
+    specFiles: { path: string, name: string }[]
+    data: T
+}
+
+declare interface TestExecutionOptions<T> {
+    verbosity: Verbosity
+    mode: BrowserMode
+    debug: boolean
+    path: string
+    name: string
+    data: T
 }
 
 declare interface PromiseGenConsumer<T> {
