@@ -18,6 +18,4 @@ module.exports = async (options) => {
         logger.stepResolved({ step, test }, expectationError);
     }, it);
     logger.testEnded(test);
-
-    return;
 }

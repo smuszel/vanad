@@ -6,7 +6,7 @@
             "name": "Test Runner",
             "type": "node",
             "request": "launch",
-            "args": ["--inspect-brk=43162", "./src/cli.js", "-d", "-m preview"],
+            "args": ["--inspect-brk=43162", "./bin/cli", "-d", "-m", "preview"],
             "port": 43162
         },
         {
@@ -15,7 +15,7 @@
             "request": "launch",
             "args": ["--inspect-brk=43162", "${file}"],
             "port": 43162
-        },
+        }
         
     ]
 }
