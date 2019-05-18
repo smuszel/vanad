@@ -23,4 +23,6 @@ const bootstrap = config => {
     return Promise.all(work);
 }
 
-module.exports = isMainThread ? bootstrap : executeTest(workerData);
+module.exports = isMainThread
+    ? bootstrap
+    : executeTest(workerData).then(() => setTimeout(() => process.exit(), 200));
