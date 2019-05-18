@@ -1,15 +1,14 @@
 const { Worker, isMainThread, workerData } = require('worker_threads');
-const cwd = process.cwd();
-const path = require('path');
 
 const bootstrap = async () => {
     const config = require('./dotenv');
     const glob = require('glob');
+    const cwd = process.cwd();
+    const path = require('path');
 
     const argv = require('yargs')
         .option('debug', { alias: 'd' })
-        .option('slug', { alias: 's', default: 'hotfix' })
-        .option('credentials', { alias: 'c', required: true })
+        .option('data', { alias: 't', default: {} })
         .config(config)
         .argv;
     
@@ -20,24 +19,26 @@ const bootstrap = async () => {
         worker.on('close', rez);
     });
 
-    const specFiles = await new Promise(rez => {
+    const specFileMatches = await new Promise(rez => {
         glob(pathPattern, { cwd }, (err, matches) => rez(matches));
     });
 
-    const work = specFiles.map(sf => {
-        const f = argv.debug ? runner : resolveWorker;
-        return f({ ...argv, sf });
+    const resolveSuite = argv.debug ? runner : resolveWorker;
+
+    const work = specFileMatches.map(sfm => {
+        return resolveSuite({ ...argv, testPath: path.join(cwd, sfm) });
     });
 
     return Promise.all(work);
 }
 
-const runner = (data = workerData) => {
-    const testGenerator = require(path.join(cwd, data.sf));
+const runner = (options = workerData) => {
+    const testGeneratorFactory = require(options.testPath);
     const getSuiteResult = require('./getSuiteResult');
-    const browserMode = data.browserMode || 'headless';
+    const getBrowser = require('./getBrowser');
+    const browser = getBrowser(options.browserMode || 'headless');
     
-    return getSuiteResult({ testGenerator, browserMode });
+    return getSuiteResult(testGeneratorFactory(browser, options.data));
 }
 
 (isMainThread ? bootstrap() : runner()).then(() => process.exit());

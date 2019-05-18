@@ -7,7 +7,7 @@ const onArrive = () => ({
     label: 'When I arrive at google',
 });
 
-module.exports = async function* (browser) {
+module.exports = (browser, data) => async function* () {
     /** @type {import('puppeteer').Page} */
     const page = await browser.newPage();
     await page.goto('https://www.google.com/');

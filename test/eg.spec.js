@@ -17,9 +17,9 @@ const afterClick = page => ({
     expect: selectorsPresence(page, [sel.disabledButton])
 });
 
-module.exports = async function* (browser) {
+module.exports = (browser, data) => async function* () {
     /** @type {import('puppeteer').Page} */
-    const page = await (await browser).newPage();
+    const page = await browser.newPage();
     await page.goto(rootUrl);
     yield onArrive(page);
     await page.click(sel.button);
