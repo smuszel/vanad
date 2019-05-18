@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
-        "checkJs": false,
-        "jsx": "react",
+        "checkJs": true,
         "outDir": "./dist",
         "lib": ["dom", "esnext"]
     }
