@@ -3,7 +3,7 @@ module.exports.selectorsPresence = (page, sel) => async () => {
     const failedIx = handles.findIndex(x => !x);
     const failedSelector = failedIx > -1 ? step.selectors[failedIx] : null;
 
-    return failedSelector && `Query for ${failedSelector} returns empty handle`;
+    return failedSelector && { type: 'failedSelectorQuery', value: failedSelector };
 }
 
 module.exports.xhrStart = page => new Promise(rez => {
