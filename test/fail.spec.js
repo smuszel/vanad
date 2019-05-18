@@ -1,4 +1,4 @@
-const { selectorsPresence } = require('../util');
+const { selectorsPresence } = require('../src/util');
 const rootUrl = 'http://localhost:5500/';
 
 const sel = {
@@ -14,11 +14,11 @@ const onArrive = page => ({
 
 const afterClick = page => ({
     label: 'I clicked xhr button',
-    expect: selectorsPresence(page, [sel.disabledButton])
+    expect: selectorsPresence(page, [sel.textResponse])
 });
 
+/** @type {TestFactory<any>} */
 module.exports = (browser, data) => async function* () {
-    /** @type {import('puppeteer').Page} */
     const page = await browser.newPage();
     await page.goto(rootUrl);
     yield onArrive(page);
