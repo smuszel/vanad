@@ -1,7 +1,22 @@
-module.exports = {
-    suiteStart: (name) => console.log('start', name),
-    stepResolved: (name, label, err) => {
-        console.log(name + ' > ' + label, err || '');
+/** @type {LoggerDict} */
+const loggers = {
+    basic: {
+        testStarted: (test) => console.log(test.name),
+        testEnded: (test) => console.log(test.name),
+        stepResolved: (stepTest, err) => {
+            console.log(stepTest.test.name + ' > ' + stepTest.step.label, (err && err.value) || '');
+        }
     },
-    suiteEnd: (name) => console.log('end', name)
+    silent: {
+        testStarted: (test) => null,
+        testEnded: (test) => null,
+        stepResolved: (step, err) => null
+    }
 }
+
+/** @param {LoggerDict} x */
+const typecheck = (x) => null
+
+/** @type {LoggerDict} */
+module.exports = loggers;
+typecheck(loggers);

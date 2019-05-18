@@ -1,4 +1,5 @@
-const consume = (f, it) => new Promise(rez => {
+/** @type {PromiseGenConsumer<Step>} */
+const consumeTest = (f, it) => new Promise(rez => {
     const acc = [];
 
     const inner = () => {
@@ -12,4 +13,4 @@ const consume = (f, it) => new Promise(rez => {
     return inner();
 });
 
-module.exports = consume;
+module.exports = consumeTest;
