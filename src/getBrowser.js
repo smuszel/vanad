@@ -22,7 +22,7 @@ module.exports = mode => {
     if (mode === 'remote') {
         browser = ppr.connect(opt.connect);
     } else if (mode === 'preview') { 
-        ppr.launch(opt.preview)
+        browser = ppr.launch(opt.preview)
     } else {
         browser = ppr.launch();
     }

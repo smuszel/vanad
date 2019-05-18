@@ -9,6 +9,7 @@ const bootstrap = async () => {
     const argv = require('yargs')
         .option('debug', { alias: 'd' })
         .option('data', { alias: 't', default: {} })
+        .option('mode', { alias: 'm', default: 'headless' })
         .config(config)
         .argv;
     
@@ -34,13 +35,14 @@ const bootstrap = async () => {
 
 const runner = async (options = workerData) => {
     const testGeneratorFactory = require(options.testPath);
-    const eventEmitterFromTestGenerator = require('./eventEmitterFromTestGenerator');
+    const executeTest = require('./executeTest');
     const getBrowser = require('./getBrowser');
-    const browser = await getBrowser(options.browserMode || 'headless');
+    const browser = await getBrowser(options.mode);
     const testGenerator = testGeneratorFactory(browser, options.data);
-    const suiteExecutionEventEmitter = eventEmitterFromTestGenerator(testGenerator);
-    await suiteExecutionEventEmitter;
-    
+    const logger = require('./eventLoggers');
+    const res = executeTest(testGenerator, logger);
+    await res;
+
     return;
 }
 
