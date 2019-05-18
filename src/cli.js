@@ -32,13 +32,16 @@ const bootstrap = async () => {
     return Promise.all(work);
 }
 
-const runner = (options = workerData) => {
+const runner = async (options = workerData) => {
     const testGeneratorFactory = require(options.testPath);
-    const getSuiteResult = require('./getSuiteResult');
+    const eventEmitterFromTestGenerator = require('./eventEmitterFromTestGenerator');
     const getBrowser = require('./getBrowser');
-    const browser = getBrowser(options.browserMode || 'headless');
+    const browser = await getBrowser(options.browserMode || 'headless');
+    const testGenerator = testGeneratorFactory(browser, options.data);
+    const suiteExecutionEventEmitter = eventEmitterFromTestGenerator(testGenerator);
+    await suiteExecutionEventEmitter;
     
-    return getSuiteResult(testGeneratorFactory(browser, options.data));
+    return;
 }
 
 (isMainThread ? bootstrap() : runner()).then(() => process.exit());
