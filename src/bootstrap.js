@@ -2,7 +2,9 @@ const { Worker, isMainThread, workerData } = require('worker_threads');
 const executeTest = require('./executeTest');
 
 /** @type {(config: RunnerConfig) => Promise<any[]>} */
-const bootstrap = config => {    
+const bootstrap = config => {
+    // drop it! Use polymorphic worker for dry test
+    // handle message event
     const launchSelfWorker = workerData => new Promise(rez => {
         const worker = new Worker(__filename, { workerData });
         worker.on('close', rez);
@@ -18,6 +20,7 @@ const bootstrap = config => {
             name: sf.name,
             mode: config.mode
         });
+        // add function handling each step
     });
 
     return Promise.all(work);

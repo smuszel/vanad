@@ -6,6 +6,7 @@ const getLogger = require('./eventLoggers');
 module.exports = async (options) => {
     /** @type {TestFactory<any>} */
     const testFactory = require(options.path);
+    // not logger - event emitter
     const logger = getLogger[options.verbosity];
     const browser = await getBrowser(options.mode);
     const testGen = testFactory(browser, options.data);

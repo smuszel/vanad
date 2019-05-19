@@ -10,19 +10,21 @@
     
 </body>
 <script>
-    const reactroot = document.createElement('div');
+    const root = document.createElement('div');
     const button = document.createElement('button');
     const respText = document.createElement('textarea');
-    respText.value = 'abc';
-    reactroot.className = 'reactroot';
     button.innerText = 'click me';
-    button.addEventListener('click', () => {
+    button.addEventListener('click', async () => {
         button.disabled = true;
-        setTimeout(() => {
-            reactroot.appendChild(respText)
-        }, 2000);
+        respText.disabled = true;
+        const resp = await fetch('/hw').then(r => r.json());
+        respText.disabled = false;
+        button.disabled = false;
+        respText.value = resp.data;
+        root.appendChild(respText);
     });
-    reactroot.appendChild(button);
-    document.body.appendChild(reactroot);
+
+    root.appendChild(button);
+    document.body.appendChild(root);
 </script>
 </html>

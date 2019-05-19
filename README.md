@@ -7,6 +7,10 @@
 * [] check if env vars are applied correctly
 * [] use incognito contexts :P
 
+
+worker pool -> each has browser -> each can acccept job -> each notifies job progress
+-> broker disperses jobs to idle workers
+
 ### Clustering
 * in future rework spec file handling by giving to queue of workers
 * inspired by https://github.com/thomasdondorf/puppeteer-cluster
