@@ -1,6 +1,4 @@
-const cp = require('child_process');
-const out = [];
-const child = cp.exec('node ./bin/cli -v basic -d -m headless');
+const { runChild, matches } = require('./util');
 
 const snapshot = [
     'started: fail.spec.js\n',
@@ -16,13 +14,8 @@ const snapshot = [
     'finished: google.spec.js\n'
 ];
 
-const matchSnapshot = () => {
-    return snapshot.every(ln => out.includes(ln));
-}
-
-child.stdout.on('data', d => out.push(d.toString()));
-child.on('exit', () => {
-    const pass = matchSnapshot();
-    !pass && console.log(snapshot, out);
+runChild('node ./test/serverSetup.js')
+runChild('node ./bin/cli -v basic -d -m headless').then(xs => {
+    !matches(snapshot, xs) && console.log(snapshot, xs);
     process.exit();
 })
