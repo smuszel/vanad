@@ -1,33 +1,20 @@
 #!/usr/bin/env node
 
-const config = require('./dotenv');
-const glob = require('glob');
-const cwd = process.cwd();
-const path = require('path');
-const bootstrap = require('../src/bootstrap');
+const run = require('../src/run');
 
 const main = async () => {
     const argv = require('yargs')
-        .option('debug', { alias: 'd', default: false })
-        .option('data', { alias: 't', default: {} })
-        .option('mode', { alias: 'm', default: 'headless' })
-        .option('verbosity', { alias: 'v', default: 'silent' })
-        .config(config)
+        .option('verbosity', { alias: 'v', default: 'bare' })
+        .option('concurrency', { alias: 'c', default: 'none' })
+        .option('browser', { alias: 'b', default: 'headless' })
+        .option('pool', { alias: 'p', default: 1 })
+        .option('cwd', { alias: 'w', default: process.cwd() })
+        .option('data', { alias: 'd', default: {} })
         .argv;
     
-    const pathPattern = argv._[0] || './test/**/*.spec.js';
-    
-    const specFiles = await new Promise(rez => {
-        glob(pathPattern, { cwd }, (err, matches) => {
-            rez(matches.map(m => ({
-                name: path.basename(m),
-                path: path.join(cwd, m)
-            })))
-        });
-    });
-
-    await bootstrap({ specFiles, ...argv });
+    const pattern = argv._[0] || './test/**/*.spec.js';
+    await run({ pattern, ...argv });
     process.exit();
-}
+};
 
 main();

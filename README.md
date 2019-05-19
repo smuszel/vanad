@@ -7,4 +7,7 @@
 * [] do code todos
 * [] add enum-map of msg types
 * [] refactor loggers
-* [] single concurrency mode -> use -t switch + package.json update
+* [] single concurrency mode -> use -t swich + package.json update
+* [] spin up workers based of pool count
+* [] force -t switch for pool > 2 + warning 
+* [] clear out typedef
