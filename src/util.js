@@ -5,4 +5,4 @@ module.exports.selectorsPresence = (page, selectors) => async () => {
     const failedSelector = failedIx > -1 ? selectors[failedIx] : null;
 
     return failedSelector ? { type: 'selectorPresence', value: failedSelector } : null;
-}
+};

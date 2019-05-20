@@ -1,35 +1,44 @@
-const { isMainThread, workerData, parentPort } = require('worker_threads');
+const { isMainThread } = require('worker_threads');
 const getBrowser = require('./getBrowser');
 
 /** @type {Worker} */
-const main = ({ mode, emitter }) => {
-    const _browser = getBrowser(mode);
+const main = (argv, cluster) => {
+    const _browser = getBrowser(argv.browser);
+    const getContext = () => _browser.then(b => b.createIncognitoBrowserContext());
     /** @param {MessageType} type */
-    const send = type => emitter.emit('*', { type });
+    const send = type => cluster.emit('*', { type });
 
     return async job => {
-        const context = await _browser.then(b => b.createIncognitoBrowserContext());
+        const context = await getContext();
         const testModule = require(job.path);
         const testGenerator = testModule(context, job.data);
         const testIterator = testGenerator();
 
         send('testStart');
         for await (const step of testIterator) {
-            const expectationError = step.expect && await step.expect();
+            const expectationError = step.expect && (await step.expect());
             send(expectationError ? 'stepFailure' : 'stepSuccess');
         }
         send('testEnd');
-    }
+    };
 };
 
 const execMain = () => {
-    const emitter = { emit: (a, b) => parentPort.postMessage(b) };
-    //@ts-ignore
-    const je = main({ workerData, emitter });
+    const { workerData, parentPort } = require('worker_threads');
+    if (!parentPort) {
+        throw 'unable to resolve parent port';
+    }
+    /** @type {any} */
+    const dummyCluster = {
+        emit: (_, message) => {
+            parentPort.postMessage(message);
+            return true;
+        },
+    };
+    const execution = main(workerData, dummyCluster);
     parentPort.on('message', job => {
-        je(JSON.parse(job));
+        execution(JSON.parse(job));
     });
+};
 
-}
-
-module.exports = isMainThread ? main : execMain()
+module.exports = isMainThread ? main : execMain();

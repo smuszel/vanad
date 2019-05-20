@@ -5,24 +5,24 @@ const defaultViewport = { width: 0, height: 0 };
 const opt = {
     connect: {
         browserURL,
-        defaultViewport
+        defaultViewport,
     },
     preview: {
         defaultViewport,
         headless: false,
         devtools: true,
-        args: ['--start-maximized']
-    }
+        args: ['--start-maximized'],
+    },
 };
 
 module.exports = mode => {
-    /** @type {Promise<import('puppeteer').Browser>} */
+    /** @type {Promise<Browser>} */
     let browser;
 
     if (mode === 'remote') {
         browser = ppr.connect(opt.connect);
-    } else if (mode === 'preview') { 
-        browser = ppr.launch(opt.preview)
+    } else if (mode === 'preview') {
+        browser = ppr.launch(opt.preview);
     } else {
         browser = ppr.launch();
     }

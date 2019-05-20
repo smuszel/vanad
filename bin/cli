@@ -5,13 +5,11 @@ const run = require('../src/run');
 const main = async () => {
     const argv = require('yargs')
         .option('verbosity', { alias: 'v', default: 'bare' })
-        .option('concurrency', { alias: 'c', default: 'none' })
         .option('browser', { alias: 'b', default: 'headless' })
-        .option('pool', { alias: 'p', default: 1 })
+        .option('threads', { alias: 't', default: false })
         .option('cwd', { alias: 'w', default: process.cwd() })
-        .option('data', { alias: 'd', default: {} })
-        .argv;
-    
+        .option('data', { alias: 'd', default: {} }).argv;
+
     const pattern = argv._[0] || './test/**/*.spec.js';
     await run({ pattern, ...argv });
     process.exit();

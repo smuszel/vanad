@@ -12,11 +12,11 @@ const snapshot = [
     'fail.spec.js > I clicked xhr button again \n',
     'finished: fail.spec.js\n',
     'pass.spec.js > I clicked xhr button again \n',
-    'finished: pass.spec.js\n'
+    'finished: pass.spec.js\n',
 ];
 
-runChild('node ./test/serverSetup.js')
-runChild('node ./bin/cli -v basic -d -m headless').then(xs => {
+runChild('node ./test/serverSetup.js');
+runChild('node ./bin/cli -v basic -m headless').then(xs => {
     const pass = matches(snapshot, xs);
     !pass && console.log(snapshot, xs);
     process.exit(pass ? 0 : 1);

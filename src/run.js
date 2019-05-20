@@ -1,38 +1,62 @@
-const factory = require('./factory');
+const workerAppender = require('./workerAppender');
+const middleware = require('./middleware');
 const { EventEmitter } = require('events');
 const noop = () => null;
 
+/** @param {ArgVars} argv */
+const jobFactory = argv => {
+    const glob = require('glob');
+    const path = require('path');
+
+    const opt = { cwd: argv.cwd };
+    const f = match => {
+        return {
+            data: argv.data,
+            name: path.basename(match),
+            path: path.join(argv.cwd, match),
+        };
+    };
+
+    return new Promise(rez => {
+        glob(argv.pattern, opt, (err, matches) => {
+            rez(matches.map(f));
+        });
+    });
+};
+
 /** @param {Job[]} jobs */
+/** @param {Cluster} cluster */
 const schedule = (cluster, jobs) => {
     let currentJobs = jobs;
-    currentJobs.forEach(job => {
-        cluster.emit('*', { type: 'job', value: job })
+    currentJobs.forEach(value => {
+        cluster.emit('*', { type: 'jobRequest', value });
     });
-}
+};
 
 /** @param {ArgVars} argv */
 const run = async argv => {
-    const jobs = await factory.job(argv);
-    const addWorker = factory.workerAppender(argv.browser)[argv.concurrency];
-    const logger = factory.logger[argv.verbosity];
+    /** @type {Cluster} */
     const cluster = new EventEmitter();
+    const jobs = await jobFactory(argv);
+    const addWorker = workerAppender(argv);
+    const logger = middleware.logger[argv.verbosity];
     const ended = new Promise(rez => {
         let i = 0;
         const f = ({ type }) => {
-            type === 'testEnd' && i++
-            i === jobs.length && rez()
+            type === 'testEnd' && i++;
+            i === jobs.length && rez();
         };
 
-        cluster.on('*', f);
+        cluster.addListener('*', f);
     });
 
-    cluster.on('*', message => {
-        (logger[message.type] || noop)(message);
+    cluster.addListener('*', message => {
+        logger && (logger[message.type] || noop)(message);
     });
     addWorker(cluster);
     schedule(cluster, jobs);
 
     return ended;
-}
+};
 
-module.exports = run
+module.exports = run;
