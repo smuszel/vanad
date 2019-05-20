@@ -1,13 +1,20 @@
 ### WIP
 
+* [x] typed messages
+* [x] do code todos
+* [x] single concurrency mode -> use -t swich + package.json update
+* [x] clear out typedef
+
+* [] colored logger
+* [] advanced logger
+* [] worker pool
+* [] error handling for worker actions
+* [] enum-map of msg types
 * [] rcfile & pkgjson
-* [] add coloring to logger output
-* [] typed messages
-* [] pass execution tree to logger so it can render canvas-like
-* [] do code todos
-* [] add enum-map of msg types
-* [] refactor loggers
-* [] single concurrency mode -> use -t swich + package.json update
-* [] spin up workers based of pool count
-* [] force -t switch for pool > 2 + warning 
-* [] clear out typedef
+
+### Advanced Logger
+
+* registered spec files are are written out line by line: `abc.spec.js`
+* during execution of spec file add animated spinner: `abc.spec.js /`
+* on reaching step during the execution print out its label `abc.spec.js: xyz /`
+* on succesful finish of test in spec file, print its name green: `abc.spec.js`
