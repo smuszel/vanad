@@ -3,9 +3,9 @@ declare type OptDict<K, T> = { [k in K]?: T }
 declare type Browser = import('puppeteer').Browser
 declare type Page = import('puppeteer').Page
 declare type EE = import('events').EventEmitter
-declare type VerbosityLevel = 'basic' | 'silent' | 'bare'
+declare type VerbosityLevel = 'debug' | 'silent' | 'bare'
 declare type BrowserMode = 'headless' | 'remote' | 'preview'
-declare type MessageType = 'testStart' | 'testEnd' | 'stepSuccess' | 'stepFailure' | 'finished' | 'jobRequest'
+declare type MessageType = keyof typeof import('./src/messages')
 declare type ArgVars = {
     verbosity: VerbosityLevel
     browser: BrowserMode
