@@ -5,7 +5,7 @@
 * [x] single concurrency mode -> use -t swich + package.json update
 * [x] clear out typedef
 
-* [] colored logger
+* [] debug logger
 * [] advanced logger
 * [] worker pool
 * [] error handling for worker actions
@@ -18,3 +18,8 @@
 * during execution of spec file add animated spinner: `abc.spec.js /`
 * on reaching step during the execution print out its label `abc.spec.js: xyz /`
 * on succesful finish of test in spec file, print its name green: `abc.spec.js`
+
+### Debug Logger
+
+* logs json of all passed messages
+* use for tests

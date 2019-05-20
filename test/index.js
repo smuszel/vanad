@@ -16,8 +16,13 @@ const snapshot = [
 ];
 
 runChild('node ./test/serverSetup.js');
-runChild('node ./bin/cli -v basic -m headless').then(xs => {
-    const pass = matches(snapshot, xs);
-    !pass && console.log(snapshot, xs);
+const threads = runChild('node ./bin/cli -v basic -m headless -t 2');
+const noThreads = runChild('node ./bin/cli -v basic -m headless');
+
+Promise.all([threads, noThreads]).then(([txs, nxs]) => {
+    const t = matches(snapshot, txs);
+    const n = matches(snapshot, nxs);
+    const pass = t && n;
+    !pass && console.log(snapshot, t, n);
     process.exit(pass ? 0 : 1);
 });
