@@ -1,9 +1,9 @@
-const workerAppender = require('./workerAppender');
+const workerFactory = require('./workerFactory');
 const middleware = require('./middleware');
-const { EventEmitter } = require('events');
 const noop = () => null;
 
 /** @param {ArgVars} argv */
+/** @returns {Promise<Job[]>} */
 const jobFactory = argv => {
     const glob = require('glob');
     const path = require('path');
@@ -24,39 +24,23 @@ const jobFactory = argv => {
     });
 };
 
-/** @param {Job[]} jobs */
-/** @param {Cluster} cluster */
-const schedule = (cluster, jobs) => {
-    let currentJobs = jobs;
-    currentJobs.forEach(value => {
-        cluster.emit('*', { type: 'jobRequest', value });
-    });
-};
-
 /** @param {ArgVars} argv */
 const run = async argv => {
-    /** @type {Cluster} */
-    const cluster = new EventEmitter();
     const jobs = await jobFactory(argv);
-    const addWorker = workerAppender(argv);
     const logger = middleware.logger[argv.verbosity];
-    const ended = new Promise(rez => {
+    const worker = workerFactory(argv);
+    const p = new Promise(rez => {
         let i = 0;
-        const f = ({ type }) => {
-            type === 'testEnd' && i++;
-            i === jobs.length && rez();
-        };
-
-        cluster.addListener('*', f);
+        jobs.map(async j => {
+            for await (const message of worker(j)) {
+                logger && (logger[message] || noop)(message);
+            }
+            i++;
+            i === 2 && rez();
+        });
     });
 
-    cluster.addListener('*', message => {
-        logger && (logger[message.type] || noop)(message);
-    });
-    addWorker(cluster);
-    schedule(cluster, jobs);
-
-    return ended;
+    return p;
 };
 
 module.exports = run;

@@ -2,7 +2,6 @@ declare type Dict<K, T> = { [k in K]: T }
 declare type OptDict<K, T> = { [k in K]?: T }
 declare type Browser = import('puppeteer').Browser
 declare type Page = import('puppeteer').Page
-declare type EE = import('events').EventEmitter
 declare type VerbosityLevel = 'debug' | 'silent' | 'bare'
 declare type BrowserMode = 'headless' | 'remote' | 'preview'
 declare type MessageType = keyof typeof import('./src/messages')
@@ -28,12 +27,7 @@ declare type Message = {
     value?: any
 }
 
-declare interface Cluster extends EE {
-    addListener(event: '*', listener: (message: Message) => void): this;
-    emit(event: '*', message: Message)
-}
-
-declare type Worker = (argv: ArgVars, cluster: Cluster) => JobExecution
+declare type Worker = (job: Job) => AsyncIterableIterator<MessageType>
 declare type JobExecution = (job: Job) => Promise<void>
 declare type Query = () => Promise<QueryFailure?>
 declare type QueryFactory<A, B> = (a: A, b: B) => Query

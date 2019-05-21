@@ -1,25 +1,23 @@
 const { isMainThread } = require('worker_threads');
 const getBrowser = require('./getBrowser');
 
-/** @type {Worker} */
-const main = (argv, cluster) => {
+// /** @type {Worker} */
+const main = argv => {
     const _browser = getBrowser(argv.browser);
     const getContext = () => _browser.then(b => b.createIncognitoBrowserContext());
-    /** @param {MessageType} type */
-    const send = type => cluster.emit('*', { type });
 
-    return async job => {
+    return async function*(job) {
         const context = await getContext();
         const testModule = require(job.path);
         const testGenerator = testModule(context, job.data);
         const testIterator = testGenerator();
 
-        send('testStart');
+        yield 'testStart';
         for await (const step of testIterator) {
             const expectationError = step.expect && (await step.expect());
-            send(expectationError ? 'stepFailure' : 'stepSuccess');
+            yield expectationError ? 'stepFailure' : 'stepSuccess';
         }
-        send('testEnd');
+        yield 'testEnd';
     };
 };
 
@@ -28,16 +26,12 @@ const execMain = () => {
     if (!parentPort) {
         throw 'unable to resolve parent port';
     }
-    /** @type {any} */
-    const dummyCluster = {
-        emit: (_, message) => {
+
+    const executionGenerator = main(workerData);
+    parentPort.on('message', async job => {
+        for await (const message of executionGenerator(JSON.parse(job))) {
             parentPort.postMessage(message);
-            return true;
-        },
-    };
-    const execution = main(workerData, dummyCluster);
-    parentPort.on('message', job => {
-        execution(JSON.parse(job));
+        }
     });
 };
 

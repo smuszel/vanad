@@ -5,7 +5,6 @@
 * [x] single concurrency mode -> use -t swich + package.json update
 * [x] clear out typedef
 
-* [] debug logger
 * [] advanced logger
 * [] worker pool
 * [] error handling for worker actions
