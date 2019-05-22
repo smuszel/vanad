@@ -24,20 +24,27 @@ const jobFactory = argv => {
     });
 };
 
+const render = console.log;
+
 /** @param {ArgVars} argv */
 const run = async argv => {
-    const jobs = await jobFactory(argv);
-    const logger = middleware.logger[argv.verbosity];
     const worker = workerFactory(argv);
+    const logger = middleware.logger[argv.verbosity];
+    const jobs = await jobFactory(argv);
+    /** @type {MessageType[]} */
+    const history = [];
+    const chanel = x => history.push(x);
+
+    jobs.map(j => {
+        worker(chanel, j);
+    });
+
     const p = new Promise(rez => {
-        let i = 0;
-        jobs.map(async j => {
-            for await (const message of worker(j)) {
-                logger && (logger[message] || noop)(message);
-            }
-            i++;
-            i === 2 && rez();
-        });
+        setInterval(() => {
+            const end = history.filter(msg => msg === 'testEnd').length === jobs.length;
+            render(history);
+            end && rez();
+        }, 30);
     });
 
     return p;

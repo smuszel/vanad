@@ -27,7 +27,8 @@ declare type Message = {
     value?: any
 }
 
-declare type Worker = (job: Job) => AsyncIterableIterator<MessageType>
+declare type Chanel = (msg: MessageType) => void
+declare type Worker = (chanel: Chanel, job: Job) => Promise<void>
 declare type JobExecution = (job: Job) => Promise<void>
 declare type Query = () => Promise<QueryFailure?>
 declare type QueryFactory<A, B> = (a: A, b: B) => Query
@@ -43,3 +44,21 @@ declare type TestGen = () => AsyncIterableIterator<Step>
 declare type Middleware = { [k in MessageType]?: (...args: any[]) => Promise<number> }
 
 //
+
+declare type RunArgv = (argv: ArgVars) => Stream<ExecutionState>
+
+declare type ExcutionState = {
+    messages: Message[]
+
+    runningJobs: Jobs[]
+    availableWorkers: Worker[],
+    pendingJobs: Jobs[]
+    runningTests: Test[]
+    passedTests: Test[]
+    failedTests: Test[]
+    pendingTests: Test[]
+    runningSteps: Step[]
+    passedSteps: Step[]
+    failedSteps: Step[]
+    pendingSteps: Step[]
+}

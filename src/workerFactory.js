@@ -1,23 +1,23 @@
 const { isMainThread } = require('worker_threads');
-const getBrowser = require('./getBrowser');
 
 /** @type {(argv: ArgVars) => Worker} */
 const concurrentWorker = argv => {
+    const getBrowser = require('./getBrowser');
     const _browser = getBrowser(argv.browser);
     const getContext = () => _browser.then(b => b.createIncognitoBrowserContext());
 
-    return async function*(job) {
+    return async (chanel, job) => {
         const context = await getContext();
         const testModule = require(job.path);
         const testGenerator = testModule(context, job.data);
         const testIterator = testGenerator();
 
-        yield 'testStart';
+        chanel('testStart');
         for await (const step of testIterator) {
             const expectationError = step.expect && (await step.expect());
-            yield expectationError ? 'stepFailure' : 'stepSuccess';
+            chanel(expectationError ? 'stepFailure' : 'stepSuccess');
         }
-        yield 'testEnd';
+        chanel('testEnd');
     };
 };
 
@@ -30,23 +30,19 @@ const parallelWorkerThread = () => {
 
     const executionGenerator = concurrentWorker(workerData);
     parentPort.on('message', async job => {
-        for await (const message of executionGenerator(JSON.parse(job))) {
-            parentPort.postMessage(message);
-        }
+        executionGenerator(msg => parentPort.postMessage(msg), job);
     });
 };
 
+// TODO handle pool size
 /** @type {(argv: ArgVars) => Worker} */
 const parallelWorkerLauncher = argv => {
     const { Worker } = require('worker_threads');
     const worker = new Worker(__filename, { workerData: argv });
 
-    return async function*(job) {
+    return async (chanel, job) => {
         worker.postMessage(job);
-        while (true) {
-            const x = await new Promise(rez => worker.on('message', msg => rez(msg)));
-            yield x;
-        }
+        worker.on('message', msg => chanel(msg));
     };
 };
 

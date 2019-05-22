@@ -3,6 +3,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node ./bin/cli",
+        "start:d": "node --inspect-brk ./bin/cli",
         "server": "node ./test/serverSetup.js",
         "test": "node ./test/index.js"
     },
