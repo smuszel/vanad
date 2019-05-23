@@ -1,4 +1,3 @@
-const { selectorsPresence } = require('../src/util');
 const rootUrl = 'http://localhost:5505/';
 
 const sel = {
@@ -6,38 +5,33 @@ const sel = {
     disabledButton: 'button:disabled',
     textResponse: 'textarea',
     disabledText: 'textarea:disabled',
+    nope: '#nope',
 };
 
-const onArrive = page => ({
-    label: 'I arrived at the page',
-    expect: selectorsPresence(page, [sel.button]),
-});
+/** @param {Page} page*/
+const expectFactory = page => {
+    return {
+        $: (...selectors) =>
+            Promise.all(selectors.map(s => page.$(s))).then(xs => xs.every(Boolean)),
+        url: expUrl => page.url().includes(expUrl),
+    };
+};
 
-const afterFirstClick = page => ({
-    label: 'I clicked xhr button for the first time',
-    expect: selectorsPresence(page, [sel.disabledButton]),
-});
+/** @type {(shouldPass: boolean) => TestGenerator<never>} */
+module.exports = shouldPass =>
+    async function*({ context }) {
+        const page = await context.newPage();
+        const expect = expectFactory(page);
 
-const afterTextResponseShowed = page => ({
-    label: 'I waited for text',
-    expect: selectorsPresence(page, [sel.button, sel.textResponse]),
-});
-
-const afterSubsequentClick = page => ({
-    label: 'I clicked xhr button again',
-    expect: selectorsPresence(page, [sel.disabledButton, sel.disabledText]),
-});
-
-/** @type {(shouldPass: boolean) => TestFactory<never>} */
-module.exports = shouldPass => browser =>
-    async function*() {
-        const page = await browser.newPage();
         await page.goto(rootUrl);
-        yield onArrive(page);
+        yield expect.url('local');
+
         await page.click(sel.button);
-        yield (shouldPass ? afterFirstClick : afterSubsequentClick)(page);
+        yield expect.$(...[sel.disabledButton, shouldPass ? null : sel.nope].filter(Boolean));
+
         await page.waitForSelector(sel.textResponse);
-        yield afterTextResponseShowed(page);
+        yield expect.$(sel.button);
+
         await page.click(sel.button);
-        yield afterSubsequentClick(page);
+        yield expect.$(sel.disabledButton, sel.disabledText);
     };
