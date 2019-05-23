@@ -30,8 +30,7 @@ declare type Job = {
 declare type Message = {
     type: MessageType
     data: {
-        job?: Job,
-        name?: string
+        name: string
     }
 }
 declare type TestGenerator<T> = ({ context: BrowserContext, data: T }) => AsyncIterableIterator<Step>

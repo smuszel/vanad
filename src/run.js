@@ -1,5 +1,6 @@
 const workerFactory = require('./workerFactory');
 const middleware = require('./middleware');
+const R = require('ramda');
 const noop = () => null;
 
 /** @param {ArgVars} argv */
@@ -24,7 +25,19 @@ const jobFactory = argv => {
     });
 };
 
-const render = console.log;
+const logUpdate = require('log-update');
+
+const frames = ['-', '\\', '|', '/'];
+let i = 0;
+
+/** @param {Message[]} history */
+const render = history => {
+    const frame = frames[(i = ++i % frames.length)];
+    const historyG = R.groupBy(m => m.data.name, history);
+    const lines = R.mapObjIndexed((v, k) => k + ' ' + v.length + ' ' + frame + '✔️', historyG);
+
+    logUpdate(R.values(lines).join('\n'));
+};
 
 /** @param {ArgVars} argv */
 const run = async argv => {
