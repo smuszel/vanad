@@ -31,9 +31,10 @@ const run = async argv => {
     const worker = workerFactory(argv);
     const logger = middleware.logger[argv.verbosity];
     const jobs = await jobFactory(argv);
-    /** @type {MessageType[]} */
+    /** @type {Message[]} */
     const history = [];
-    const chanel = x => history.push(x);
+    /** @type {Chanel} */
+    const chanel = x => void history.push(x);
 
     jobs.map(j => {
         worker(chanel, j);
@@ -41,10 +42,11 @@ const run = async argv => {
 
     const p = new Promise(rez => {
         setInterval(() => {
-            const end = history.filter(msg => msg === 'testEnd').length === jobs.length;
-            render(history);
+            const allFinished = history.filter(msg => msg.type === 'testEnd');
+            const end = allFinished.length === jobs.length;
             end && rez();
-        }, 30);
+            render(history);
+        }, 300);
     });
 
     return p;
