@@ -8,16 +8,19 @@ const concurrentWorker = argv => {
 
     return async (chanel, job) => {
         const context = await getContext();
-        const testModule = require(job.path);
-        const testGenerator = testModule(context, job.data);
-        const testIterator = testGenerator();
+        const testGenerator = require(job.path);
+        const testIterator = testGenerator({ context, data: job.data });
 
-        chanel('testStart');
+        chanel({ type: 'testStart', data: { name: job.name } });
         for await (const step of testIterator) {
-            const expectationError = step.expect && (await step.expect());
-            chanel(expectationError ? 'stepFailure' : 'stepSuccess');
+            const type = step ? 'stepSuccess' : 'stepFailure';
+
+            chanel({ type, data: { name: job.name } });
+            if (!step) {
+                break;
+            }
         }
-        chanel('testEnd');
+        chanel({ type: 'testEnd', data: { name: job.name } });
     };
 };
 
@@ -34,13 +37,24 @@ const parallelWorkerThread = () => {
     });
 };
 
-// TODO handle pool size
 /** @type {(argv: ArgVars) => Worker} */
 const parallelWorkerLauncher = argv => {
     const { Worker } = require('worker_threads');
-    const worker = new Worker(__filename, { workerData: argv });
+    const makeWorker = () => new Worker(__filename, { workerData: argv });
+    const workers = [makeWorker()];
+
+    const workerIterator = (function*() {
+        let i = 0;
+        while (true) {
+            yield workers[i];
+            i++;
+            i === argv.threads && (i = 0);
+            i === workers.length && workers.push(makeWorker());
+        }
+    })();
 
     return async (chanel, job) => {
+        const worker = workerIterator.next().value;
         worker.postMessage(job);
         worker.on('message', msg => chanel(msg));
     };
