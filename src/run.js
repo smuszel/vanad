@@ -1,6 +1,7 @@
 const workerFactory = require('./workerFactory');
 const middleware = require('./middleware');
 const R = require('ramda');
+const { renderMessageRecord } = require('./util');
 const noop = () => null;
 
 /** @param {ArgVars} argv */
@@ -33,8 +34,11 @@ let i = 0;
 /** @param {Message[]} history */
 const render = history => {
     const frame = frames[(i = ++i % frames.length)];
-    const historyG = R.groupBy(m => m.data.name, history);
-    const lines = R.mapObjIndexed((v, k) => k + ' ' + v.length + ' ' + frame + '✔️', historyG);
+    const historyG = R.groupBy(m => m.name, history);
+    const lines = R.mapObjIndexed((v, k) => {
+        const types = v.map(m => m.type);
+        return renderMessageRecord(k, types, frame);
+    }, historyG);
 
     logUpdate(R.values(lines).join('\n'));
 };
@@ -59,7 +63,7 @@ const run = async argv => {
             const end = allFinished.length === jobs.length;
             end && rez();
             render(history);
-        }, 300);
+        }, 100);
     });
 
     return p;

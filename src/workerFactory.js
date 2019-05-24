@@ -10,17 +10,17 @@ const concurrentWorker = argv => {
         const context = await getContext();
         const testGenerator = require(job.path);
         const testIterator = testGenerator({ context, data: job.data });
+        /** @param {MessageType} type */
+        const send = type => chanel({ type, name: job.name });
 
-        chanel({ type: 'testStart', data: { name: job.name } });
+        send('testStart');
         for await (const step of testIterator) {
-            const type = step ? 'stepSuccess' : 'stepFailure';
-
-            chanel({ type, data: { name: job.name } });
+            send(step ? 'stepSuccess' : 'stepFailure');
             if (!step) {
                 break;
             }
         }
-        chanel({ type: 'testEnd', data: { name: job.name } });
+        send('testEnd');
     };
 };
 
