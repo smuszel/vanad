@@ -7,10 +7,10 @@ declare type OptDict<K, T> = { [k in K]?: T }
 declare type ParamsOf<T> = T extends (... args: infer T) => any ? T : never;
 declare type ReturnOf<T> = T extends (... args: any[]) => infer T ? T : never; 
 
-declare type MessageType = keyof typeof import('./src/messages')
-// todo move to constants
-declare type VerbosityLevel = 'debug' | 'silent' | 'bare'
-declare type BrowserMode = 'headless' | 'remote' | 'preview'
+declare type MessageType = keyof typeof import('./src/constants').MessageType
+declare type VerbosityLevel = keyof typeof import('./src/constants').VerbosityLevel
+declare type BrowserMode = keyof typeof import('./src/constants').BrowserMode
+
 declare type ArgVars = {
     verbosity: VerbosityLevel
     browser: BrowserMode
@@ -38,7 +38,8 @@ declare type Message = {
 
 declare type TestGenerator<T> = (init: { context: BrowserContext } & T) => AsyncIterableIterator<any>
 declare type Chanel = (msg: Message) => void
-declare type Worker = (chanel: Chanel, job: Job) => Promise<void>
+declare type JobExecution = (chanel: Chanel, job: Job) => Promise<void>
+declare type Loggers = Dict<VerbosityLevel, () => (end: boolean, history: Message[]) => void>
 
 interface Assert {
     <T>(given: T, whenThen: [ParamsOf<T>, ReturnOf<T>][]): void

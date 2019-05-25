@@ -26,22 +26,3 @@
 * [] Example spec
 * [] Cli options
 * [] Helper lib doc
-
-### Minimum Logger
-
-* [] chosen by verbosity
-* [] on success emits nothing
-* [] no spinner
-* [] on error throws that error
-* [] on fail emits the name of file with step number 
-
-### Advanced Logger
-
-* [x] registered spec files are are written out line by line: `abc.spec.js`
-* [x] during execution of spec file add animated spinner: `abc.spec.js /`
-* [x] on reaching step during the execution print out dots equal to index + 1 `abc.spec.js: . . /`
-* [] on succesful finish of test in spec file, print its name green: `abc.spec.js`
-* [] on failure finish of test in spec file, print its name red: `abc.spec.js . . !`
-* [] on error throws that error
-* [] render with newlines top + bottom
-* [] chosen by verbosity

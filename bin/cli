@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 const run = require('../src/run');
-
-setTimeout(() => {
-    process.exit();
-}, 10000);
+const con = require('../src/constants');
+const yargs = require('yargs');
 
 const main = async () => {
-    const argv = require('yargs')
-        .option('verbosity', { alias: 'v', default: 'bare' })
-        .option('browser', { alias: 'b', default: 'headless' })
+    const verbosityChoices = Object.keys(con.VerbosityLevel);
+    const browserChoices = Object.keys(con.BrowserMode);
+
+    const argv = yargs
+        .option('verbosity', { alias: 'v', default: 'advanced', choices: verbosityChoices })
+        .option('browser', { alias: 'b', default: 'headless', choices: browserChoices })
         .option('threads', { alias: 't', default: false })
         .option('cwd', { alias: 'w', default: process.cwd() })
         .option('data', { alias: 'd', default: {} }).argv;

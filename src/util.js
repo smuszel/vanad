@@ -1,23 +1,39 @@
+const successLength = messages => messages.filter(x => x === 'stepSuccess').length;
+
+/** @param {any} colorizer */
 /** @param {string} name */
 /** @param {MessageType[]} messages */
 /** @param {string} spiner */
-module.exports.renderMessageRecord = (name, messages, spiner) => {
-    const _dots = messages.filter(x => x === 'stepSuccess').map(() => '.');
-    let dots;
+module.exports.renderAdvancedMessageRecord = (colorizer, name, messages, spiner) => {
+    let colorize;
     let fix;
 
     if (messages.includes('stepFailure')) {
-        fix = '!';
-        dots = _dots;
+        fix = successLength(messages);
+        colorize = colorizer.red;
     } else if (messages.includes('testEnd')) {
-        fix = '✅';
-        dots = [];
+        fix = '';
+        colorize = colorizer.green;
     } else {
-        fix = spiner;
-        dots = _dots;
+        fix = '. '.repeat(successLength(messages)) + spiner;
+        colorize = x => x;
     }
 
-    const result = [name, ...dots, fix].join(' ');
+    const result = colorize((name + ' ' + fix).trim());
 
     return result;
+};
+
+/** @param {string} name */
+/** @param {MessageType[]} messages */
+module.exports.renderBasicMessageRecord = (name, messages) => {
+    let msg;
+
+    if (messages.includes('stepFailure')) {
+        msg = name + ' ' + messages.filter(m => m === 'stepSuccess').length;
+    } else {
+        msg = '';
+    }
+
+    return msg;
 };

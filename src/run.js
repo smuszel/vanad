@@ -1,8 +1,5 @@
-const workerFactory = require('./workerFactory');
-const middleware = require('./middleware');
-const R = require('ramda');
-const { renderMessageRecord } = require('./util');
-const noop = () => null;
+const prepareJobExecution = require('./jobExecution');
+const loggers = require('./loggers');
 
 /** @param {ArgVars} argv */
 /** @returns {Promise<Job[]>} */
@@ -26,28 +23,10 @@ const jobFactory = argv => {
     });
 };
 
-//@ts-ignore
-const logUpdate = require('log-update');
-
-const frames = ['-', '\\', '|', '/'];
-let i = 0;
-
-/** @param {Message[]} history */
-const render = history => {
-    const frame = frames[(i = ++i % frames.length)];
-    const historyG = R.groupBy(m => m.name, history);
-    const lines = R.mapObjIndexed((v, k) => {
-        const types = v.map(m => m.type);
-        return renderMessageRecord(k, types, frame);
-    }, historyG);
-
-    logUpdate(R.values(lines).join('\n'));
-};
-
 /** @param {ArgVars} argv */
 const run = async argv => {
-    const worker = workerFactory(argv);
-    const logger = middleware.logger[argv.verbosity];
+    const worker = prepareJobExecution(argv);
+    const render = loggers[argv.verbosity]();
     const jobs = await jobFactory(argv);
     /** @type {Message[]} */
     const history = [];
@@ -59,11 +38,12 @@ const run = async argv => {
     });
 
     const p = new Promise(rez => {
+        let end = false;
         setInterval(() => {
-            const allFinished = history.filter(msg => msg.type === 'testEnd');
-            const end = allFinished.length === jobs.length;
+            render(end, history);
             end && rez();
-            render(history);
+            const allFinished = history.filter(msg => msg.type === 'testEnd');
+            end = allFinished.length === jobs.length;
         }, 100);
     });
 

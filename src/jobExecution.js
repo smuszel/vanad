@@ -1,7 +1,7 @@
 const { isMainThread } = require('worker_threads');
 
-/** @type {(argv: ArgVars) => Worker} */
-const concurrentWorker = argv => {
+/** @type {(argv: ArgVars) => JobExecution} */
+const concurrent = argv => {
     const getBrowser = require('./getBrowser');
     const _browser = getBrowser(argv.browser);
     const getContext = () => _browser.then(b => b.createIncognitoBrowserContext());
@@ -25,20 +25,20 @@ const concurrentWorker = argv => {
 };
 
 /** @type {() => void} */
-const parallelWorkerThread = () => {
+const parallelMain = () => {
     const { workerData, parentPort } = require('worker_threads');
     if (!parentPort) {
         throw 'unable to resolve parent port';
     }
 
-    const executionGenerator = concurrentWorker(workerData);
+    const executionGenerator = concurrent(workerData);
     parentPort.on('message', async job => {
         executionGenerator(msg => parentPort.postMessage(msg), job);
     });
 };
 
-/** @type {(argv: ArgVars) => Worker} */
-const parallelWorkerLauncher = argv => {
+/** @type {(argv: ArgVars) => JobExecution} */
+const parallelLauncher = argv => {
     const { Worker } = require('worker_threads');
     const makeWorker = () => new Worker(__filename, { workerData: argv });
     const workers = [makeWorker()];
@@ -64,11 +64,11 @@ if (isMainThread) {
     /** @param {ArgVars} argv */
     module.exports = argv => {
         if (argv.threads) {
-            return parallelWorkerLauncher(argv);
+            return parallelLauncher(argv);
         } else {
-            return concurrentWorker(argv);
+            return concurrent(argv);
         }
     };
 } else {
-    parallelWorkerThread();
+    parallelMain();
 }
