@@ -3,9 +3,10 @@
         "checkJs": true,
         "outDir": "./dist",
         "strict": true,
+        "target": "es6",
         "noImplicitAny": false,
         "strictNullChecks": true,
         "forceConsistentCasingInFileNames": true,
-        "lib": ["esnext"]
+        "lib": ["esnext", "dom"]
     }
 }

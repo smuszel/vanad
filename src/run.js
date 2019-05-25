@@ -26,6 +26,7 @@ const jobFactory = argv => {
     });
 };
 
+//@ts-ignore
 const logUpdate = require('log-update');
 
 const frames = ['-', '\\', '|', '/'];

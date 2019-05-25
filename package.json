@@ -2,10 +2,12 @@
     "version": "0.0.1",
     "main": "index.js",
     "scripts": {
-        "start": "node ./bin/cli",
+        "start": "node ./bin/cli ./examples/**/*.spec.js",
         "start:d": "node --inspect-brk ./bin/cli",
-        "server": "node ./test/serverSetup.js",
-        "test": "node ./test/index.js"
+        "server": "node ./examples/backend.js",
+        "test:unit": "node ./test/e2e.js",
+        "t": "node ./test/e2e.js",
+        "test:e2e": "node ./test/e2e.js"
     },
     "author": "stmu",
     "license": "ISC",
@@ -17,9 +19,9 @@
         "dotenv": "^8.0.0",
         "fast-deep-equal": "^2.0.1",
         "glob": "^7.1.4",
+        "log-update": "3.2.0",
         "puppeteer": "^1.16.0",
         "ramda": "^0.26.1",
-        "log-update": "3.2.0",
         "yargs": "^13.2.4"
     },
     "devDependencies": {

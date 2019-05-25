@@ -36,10 +36,9 @@ declare type Message = {
     name: string
 }
 
-declare type TestGenerator<T> = ({ context: BrowserContext, data: T }) => AsyncIterableIterator<Step>
+declare type TestGenerator<T> = (init: { context: BrowserContext } & T) => AsyncIterableIterator<any>
 declare type Chanel = (msg: Message) => void
 declare type Worker = (chanel: Chanel, job: Job) => Promise<void>
-declare type Step = boolean
 
 interface Assert {
     <T>(given: T, whenThen: [ParamsOf<T>, ReturnOf<T>][]): void

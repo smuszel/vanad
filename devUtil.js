@@ -26,9 +26,14 @@ module.exports.runChild = command =>
 
         const child = cp.exec(command);
         const out = [];
-
+        // setInterval(() => {
+        //     console.log(out);
+        // }, 2000);
         child.stdout && child.stdout.on('data', d => out.push(d.toString()));
+        child.on('error', err => {
+            rez([err, out]);
+        });
         child.on('exit', () => {
-            rez(out);
+            rez(['', out]);
         });
     });
