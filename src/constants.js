@@ -1,8 +1,10 @@
 module.exports.MessageType = {
     testStart: 'testStart',
+    init: 'init',
     testEnd: 'testEnd',
     stepSuccess: 'stepSuccess',
     stepFailure: 'stepFailure',
+    debug: 'debug',
 };
 
 module.exports.VerbosityLevel = {

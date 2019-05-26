@@ -26,3 +26,6 @@
 * [] Example spec
 * [] Cli options
 * [] Helper lib doc
+
+* [] refactor loggers
+* [] look into e2e

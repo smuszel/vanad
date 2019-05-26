@@ -9,7 +9,7 @@ const assert = (f, xs) => {
         const exp = gt[1];
         const result = await f(...gt[0]);
         const msg = `[${ix}]: ${render(result)} should be ${render(exp)}`;
-        const ok = eq(result, exp);
+        const ok = eq(result, exp) && (gt[2] ? gt[2]() : true);
 
         !ok && console.log(msg);
     });

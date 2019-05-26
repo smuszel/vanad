@@ -15,6 +15,7 @@ const opt = {
     },
 };
 
+/** @param {BrowserMode} mode */
 module.exports = mode => {
     /** @type {Promise<Browser>} */
     let browser;

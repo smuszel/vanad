@@ -1,5 +1,6 @@
-const prepareJobExecution = require('./jobExecution');
+const prepareJobExecution = require('./jobExecutionWrapper');
 const loggers = require('./loggers');
+const Computation = require('./Computation');
 
 /** @param {ArgVars} argv */
 /** @returns {Promise<Job[]>} */
@@ -25,9 +26,12 @@ const jobFactory = argv => {
 
 /** @param {ArgVars} argv */
 const run = async argv => {
+    const middleware = [];
+    const computation = new Computation(middleware);
     const worker = prepareJobExecution(argv);
     const render = loggers[argv.verbosity]();
     const jobs = await jobFactory(argv);
+
     /** @type {Message[]} */
     const history = [];
     /** @type {Chanel} */
