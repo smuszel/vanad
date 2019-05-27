@@ -1,6 +1,5 @@
 const unwrapPromise = require('./unwrapPromise');
 const split = require('./split');
-const resolveTracked = require('./resolveTracked');
 const prepareJobExecution = require('./jobExecutionWrapper');
 const loggers = require('./loggers');
 const runPlugin = require('./runPlugin');
