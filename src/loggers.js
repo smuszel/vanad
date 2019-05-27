@@ -1,6 +1,6 @@
 const frames = ['-', '\\', '|', '/'];
 
-/** @type {Loggers} */
+// /** @type {Loggers} */
 module.exports = {
     debug: () => (end, history) => {
         end && console.log(JSON.stringify(history));

@@ -2,13 +2,29 @@ const eq = require('util').isDeepStrictEqual;
 const _render = require('util').inspect;
 const render = x => _render(x, { depth: 4, colors: true, compact: true });
 
+const id = x => x;
+const _uncurry = f => (x, y) => f(x)(y);
+const uncurry = (f, n) => (...xs) => {
+    const next = acc => xs => xs.reduce(_uncurry(id), acc);
+    if (n > xs.length) throw new RangeError('too few arguments');
+    return next(f)(xs.slice(0, n));
+};
+
 Array.prototype.map;
 /** @type {Assert} */
-const assert = (f, xs) => {
-    xs.forEach(async (gt, ix) => {
+const assert = (curriedFn, xs) => {
+    Object.keys(xs).forEach(async k => {
+        const gt = xs[k];
         const exp = gt[1];
-        const result = await f(...gt[0]);
-        const msg = `[${ix}]: ${render(result)} should be ${render(exp)}`;
+        const args = gt[0];
+        const execCurried = async (fn, ix = 0) => {
+            const l = fn.length;
+            const res = await fn(...args.slice(ix, ix + l));
+            return typeof res === 'function' ? await execCurried(res, l) : res;
+        };
+        const result = await execCurried(curriedFn);
+        console.log(resu);
+        const msg = `[${k}]: ${render(result)} should be ${render(exp)}`;
         const ok = eq(result, exp) && (gt[2] ? gt[2]() : true);
 
         !ok && console.log(msg);
