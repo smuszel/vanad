@@ -1,7 +1,6 @@
 const { isMainThread } = require('worker_threads');
-const jobExecution = require('./jobExecution');
+const jobExecution = require('../helpers/jobExecution');
 
-/** @type {() => void} */
 const parallelMain = () => {
     const { workerData, parentPort } = require('worker_threads');
     if (!parentPort) {
@@ -14,7 +13,7 @@ const parallelMain = () => {
     });
 };
 
-/** @type {(argv: ArgVars) => JobExecution} */
+/** @type {(argv: ArgVars) => (chanel: Chanel, job: Job) => void} */
 const parallelLauncher = argv => {
     const { Worker } = require('worker_threads');
     const makeWorker = () => new Worker(__filename, { workerData: argv });
@@ -30,7 +29,7 @@ const parallelLauncher = argv => {
         }
     })();
 
-    return async (chanel, job) => {
+    return (chanel, job) => {
         const worker = workerIterator.next().value;
         worker.postMessage(job);
         worker.on('message', msg => chanel(msg));
@@ -38,13 +37,36 @@ const parallelLauncher = argv => {
 };
 
 if (isMainThread) {
-    /** @param {ArgVars} argv */
+    /** @type {PluginFactory} */
     module.exports = argv => {
+        let launcher;
+
         if (argv.threads) {
-            return parallelLauncher(argv);
+            launcher = parallelLauncher;
         } else {
-            return jobExecution(argv);
+            launcher = jobExecution;
         }
+
+        const execution = launcher(argv);
+        /** @type {Message[]} */
+        const queue = [];
+        /** @type {Chanel} */
+        const chanel = x => {
+            queue.push(x);
+        };
+
+        return (_, diff) => {
+            const msg = diff.find(x => x.type === 'jobScheduled');
+            const curr = queue.splice(0, queue.length);
+
+            if (msg) {
+                msg.value.forEach(job => {
+                    execution(chanel, job);
+                });
+            }
+
+            return curr;
+        };
     };
 } else {
     parallelMain();

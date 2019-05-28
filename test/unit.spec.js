@@ -1,6 +1,6 @@
 const chalk = require('../node_modules/chalk/index');
 const { assert } = require('../devUtil');
-const { renderAdvancedMessageRecord, renderBasicMessageRecord } = require('../src/util');
+const { renderAdvancedMessageRecord, renderBasicMessageRecord } = require('../src/helpers/util');
 
 // /** @type {(x: number) => (y: number) => string} */
 // const f = x => y => '' + x + y;

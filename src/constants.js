@@ -4,7 +4,9 @@ module.exports.MessageType = {
     testEnd: 'testEnd',
     stepSuccess: 'stepSuccess',
     stepFailure: 'stepFailure',
+    jobScheduled: 'jobScheduled',
     debug: 'debug',
+    exit: 'exit',
 };
 
 module.exports.VerbosityLevel = {

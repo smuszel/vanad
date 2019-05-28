@@ -6,7 +6,7 @@
         "start:d": "node --inspect-brk ./bin/cli",
         "server": "node ./examples/backend.js",
         "test:unit": "node ./test/unit.spec.js",
-        "t": "node ./test/unit.spec.js",
+        "t": "node ./test/unit/unwrap.spec.js",
         "test:e2e": "node ./test/e2e.spec.js"
     },
     "author": "stmu",

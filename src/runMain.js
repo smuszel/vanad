@@ -1,39 +1,19 @@
-const unwrapPromise = require('./unwrapPromise');
-const split = require('./split');
-const prepareJobExecution = require('./jobExecutionWrapper');
-const loggers = require('./loggers');
-const runPlugin = require('./runPlugin');
-
-const pluginFactory = argv => {
-    return state => {
-        return {
-            init: [() => 1, 'debug'],
-        };
-    };
-};
-
-/** @type {State} */
-const initialState = {
-    done: [],
-    queued: [{ type: 'init' }],
-    tracked: [],
-};
+const execution = require('./plugins/execution');
+const logger = require('./plugins/logger');
+const unwrap = require('./unwrap');
+const scheduler = require('./plugins/scheduler');
 
 /** @param {ArgVars} argv */
 module.exports = async argv => {
-    /** @type {Array<(state: State) => Plugin>} */
-    const pluginsX = [];
-    let state = initialState;
+    const plugins = [scheduler, logger, execution].map(p => p(argv));
+    /** @type {Message[]} */
+    let done = [];
+    /** @type {Message[]} */
+    let diff = [];
 
     setInterval(() => {
-        const plugins = pluginsX.map(p => p(state));
-        const [stillTracked, queued] = split(unwrapPromise, state.tracked);
-        const nextTracked = plugins.flatMap(p => runPlugin(p, queued));
-
-        state = {
-            queued: [],
-            tracked: [...stillTracked, ...nextTracked],
-            done: [...state.done, ...queued],
-        };
+        const nextDiff = plugins.flatMap(p => p(done, diff));
+        done = done.concat(diff);
+        diff = nextDiff;
     }, 100);
 };

@@ -1,4 +1,4 @@
-/** @type {(argv: ArgVars) => JobExecution} */
+/** @type {(argv: ArgVars) => (chanel: Chanel, job: Job) => void} */
 module.exports = argv => {
     const getBrowser = require('./getBrowser');
     const _browser = getBrowser(argv.browser);
@@ -9,7 +9,7 @@ module.exports = argv => {
         const testGenerator = require(job.path);
         const testIterator = testGenerator({ context, data: job.data });
         /** @param {MessageType} type */
-        const send = type => chanel({ type, value: job.name });
+        const send = type => chanel({ type, value: job });
 
         send('testStart');
         for await (const step of testIterator) {

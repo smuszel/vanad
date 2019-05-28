@@ -1,27 +1,24 @@
-const successLength = messages => messages.filter(x => x === 'stepSuccess').length;
-
 /** @param {any} colorizer */
-/** @param {string} name */
-/** @param {MessageType[]} messages */
+/** @param {Progress} progress */
 /** @param {string} spiner */
-module.exports.renderAdvancedMessageRecord = (colorizer, name, messages, spiner) => {
+module.exports.renderAdvancedMessageRecord = (colorizer, progress, spiner) => {
     let colorize;
     let fix;
 
-    if (messages.includes('stepFailure')) {
-        fix = successLength(messages);
+    if (progress.failed) {
+        fix = progress.step;
         colorize = colorizer.red;
-    } else if (messages.includes('testEnd')) {
+    } else if (progress.finished) {
         fix = '';
         colorize = colorizer.green;
     } else {
-        fix = '. '.repeat(successLength(messages)) + spiner;
+        fix = '. '.repeat(progress.step) + spiner;
         colorize = x => x;
     }
 
-    const result = colorize((name + ' ' + fix).trim());
+    const result = (progress.job.name + ' ' + fix).trim();
 
-    return result;
+    return colorize(result);
 };
 
 /** @param {string} name */

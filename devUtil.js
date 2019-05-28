@@ -23,7 +23,6 @@ const assert = (curriedFn, xs) => {
             return typeof res === 'function' ? await execCurried(res, l) : res;
         };
         const result = await execCurried(curriedFn);
-        console.log(resu);
         const msg = `[${k}]: ${render(result)} should be ${render(exp)}`;
         const ok = eq(result, exp) && (gt[2] ? gt[2]() : true);
 

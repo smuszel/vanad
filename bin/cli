@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const run = require('../src/run');
+const run = require('../src/runMain');
 const con = require('../src/constants');
 const yargs = require('yargs');
 
@@ -16,8 +16,7 @@ const main = async () => {
         .option('data', { alias: 'd', default: {} }).argv;
 
     const pattern = argv._[0] || './test/**/*.spec.js';
-    await run({ pattern, ...argv });
-    process.exit();
+    run({ pattern, ...argv });
 };
 
 main();

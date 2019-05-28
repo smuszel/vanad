@@ -22,15 +22,8 @@ declare type ArgVars = {
     pattern: string
 }
 
-declare type State = {
-    done: Message[],
-    queued: Message[],
-    tracked: Message[],
-}
-
 declare type Message = {
     type: MessageType
-    settled?: boolean
     value?: any
 }
 
@@ -40,14 +33,26 @@ declare type Job = {
     name: string
 }
 
+declare type Progress = {
+    job: Job
+    failed: boolean
+    finished: boolean
+    started: boolean
+    step: number
+    limit?: number
+}
 
+
+declare type Selector<T> = (done: Message[], diff: Message[]) => T
 declare type TestGenerator<T> = (init: { context: BrowserContext } & T) => AsyncIterableIterator<any>
 declare interface PathTestGenerator { }
 declare type Chanel = (msg: Message) => void
 declare type JobExecution = (chanel: Chanel, job: Job) => Promise<void>
-declare type Plugin = OptDict<MessageType, [(value: any) => any, MessageType?]>
+declare type Plugin = (done: Message[], diff: Message[]) => Message[]
+declare type PluginFactory = (argv: ArgVars) => Plugin
 declare type Split = <T>(f: (x: T) => T | undefined, xs: T[]) => [T[], T[]]
 
 // declare type Box<T> = ()
 // declare type Loggers = Dict<VerbosityLevel, () => (end: boolean, history: Message[]) => void>
+// declare type Plugin = OptDict<MessageType, [(value: any) => any, MessageType?]>
 
