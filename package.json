@@ -19,10 +19,10 @@
         "cli": "./bin/cli"
     },
     "files": [
-        "./bin/**/*",
-        "./src/**/*",
+        "bin",
+        "src",
         "types.d.ts",
-        "index.js"
+        "README.md"
     ],
     "dependencies": {
         "glob": "^7.1.4"
