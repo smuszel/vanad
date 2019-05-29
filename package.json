@@ -1,38 +1,46 @@
 {
-    "version": "0.0.1",
-    "main": "index.js",
-    "scripts": {
-        "start": "node ./bin/cli ./examples/hello-world/hw.spec.js",
-        "start:d": "node --inspect-brk ./bin/cli",
-        "server": "node ./examples/backend.js",
-        "test:unit": "node ./test/unit.spec.js",
-        "t": "node ./test/unit/unwrap.spec.js",
-        "test:e2e": "node ./test/e2e.spec.js"
+    "name": "vanad",
+    "description": "Testing framework. Uses async generator for test files",
+    "keywords": ["testing", "puppeteer", "e2e", "unit", "generator"],
+    "homepage": "https://github.com/smuszel/vanad",
+    "repository": {
+        "type" : "git",
+        "url" : "https://github.com/smuszel/vanad"
     },
-    "author": "stmu",
+    "version": "0.0.1-alpha",
+    "main": "./src/runMain.js",
+    "scripts": {
+        "server": "node ./examples/backend.js"
+    },
+    "author": "smuszel",
     "license": "ISC",
     "bin": {
-        "ppr": "./bin/cli"
+        "cli": "./bin/cli"
     },
+    "files": [
+        "./bin/**/*",
+        "./src/**/*",
+        "types.d.ts",
+        "index.js"
+    ],
     "dependencies": {
         "chalk": "^2.4.2",
-        "dotenv": "^8.0.0",
-        "fast-deep-equal": "^2.0.1",
         "glob": "^7.1.4",
-        "log-update": "3.2.0",
+        "log-update": "^3.2.0",
+        "find-up": "^4.0.0",
         "puppeteer": "^1.16.0",
-        "ramda": "^0.26.1",
         "yargs": "^13.2.4"
     },
     "devDependencies": {
-        "@types/dotenv": "6.1.1",
-        "@types/express": "4.16.1",
-        "@types/glob": "7.1.1",
-        "@types/node": "12.0.2",
+        "@types/dotenv": "^6.1.1",
+        "@types/express": "^4.16.1",
+        "@types/glob": "^7.1.1",
+        "@types/node": "^12.0.2",
         "@types/puppeteer": "^1.12.4",
-        "@types/ramda": "0.26.8",
-        "@types/yargs": "13.0.0",
-        "express": "4.17.0",
-        "kill-port": "1.5.0"
+        "@types/ramda": "^0.26.8",
+        "@types/yargs": "^13.0.0",
+        "express": "^4.17.0",
+        "typescript": "^3.5.1",
+        "kill-port": "^1.5.0"
     }
 }

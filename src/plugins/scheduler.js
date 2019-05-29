@@ -1,4 +1,4 @@
-/** @type {PluginFactory} */
+/** @type {VPluginFactory} */
 module.exports = argv => {
     const glob = require('glob');
     const path = require('path');
@@ -14,7 +14,7 @@ module.exports = argv => {
     };
     let jobs;
     let pristine = true;
-    glob(argv.pattern, opt, (_, matches) => {
+    glob(argv.path, opt, (_, matches) => {
         jobs = matches.map(jobOf);
     });
 

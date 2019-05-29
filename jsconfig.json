@@ -8,6 +8,6 @@
         "noImplicitAny": false,
         "strictNullChecks": true,
         "forceConsistentCasingInFileNames": true,
-        "lib": ["esnext"]
+        "lib": ["esnext", "dom"]
     }
 }

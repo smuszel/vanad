@@ -15,18 +15,22 @@ const opt = {
     },
 };
 
-/** @param {BrowserMode} mode */
-module.exports = mode => {
-    /** @type {Promise<Browser>} */
+/** @param {ArgVars} argv */
+module.exports = argv => {
+    /** @type {Promise<Browser> | undefined} */
     let browser;
 
-    if (mode === 'remote') {
+    if (argv.browser === 'remote') {
         browser = ppr.connect(opt.connect);
-    } else if (mode === 'preview') {
+    } else if (argv.browser === 'preview') {
         browser = ppr.launch(opt.preview);
-    } else {
+    } else if (argv.browser === 'headless') {
         browser = ppr.launch();
     }
 
-    return browser;
+    return async () => {
+        const context = await (browser && browser.then(b => b.createIncognitoBrowserContext()));
+
+        return context ? { context } : {};
+    };
 };

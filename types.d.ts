@@ -10,7 +10,7 @@ declare type OptDict<K, T> = { [k in K]?: T }
 declare type Defined = string | number | boolean | object
 
 interface NodeRequire {
-    (id: PathTestGenerator): TestGenerator<any>
+    (id: PathTestGenerator): Test<{ data: any, context?: BrowserContext}>
 }
 
 declare type ArgVars = {
@@ -19,7 +19,7 @@ declare type ArgVars = {
     threads: number | boolean
     cwd: string
     data: any
-    pattern: string
+    path: string
 }
 
 declare type Message = {
@@ -36,23 +36,20 @@ declare type Job = {
 declare type Progress = {
     job: Job
     failed: boolean
+    reason: any
     finished: boolean
     started: boolean
-    step: number
+    step: string[]
     limit?: number
 }
 
-
 declare type Selector<T> = (done: Message[], diff: Message[]) => T
-declare type TestGenerator<T> = (init: { context: BrowserContext } & T) => AsyncIterableIterator<any>
+declare type Test<T> = (init: T) => AsyncIterableIterator<string | boolean>
+declare type UnitTest<T> = Test<{ data: T}>
+declare type E2ETest<T> = Test<{ context: BrowserContext, data: T }>
 declare interface PathTestGenerator { }
 declare type Chanel = (msg: Message) => void
 declare type JobExecution = (chanel: Chanel, job: Job) => Promise<void>
-declare type Plugin = (done: Message[], diff: Message[]) => Message[]
-declare type PluginFactory = (argv: ArgVars) => Plugin
+declare type VPlugin = (done: Message[], diff: Message[]) => Message[]
+declare type VPluginFactory = (argv: ArgVars) => VPlugin
 declare type Split = <T>(f: (x: T) => T | undefined, xs: T[]) => [T[], T[]]
-
-// declare type Box<T> = ()
-// declare type Loggers = Dict<VerbosityLevel, () => (end: boolean, history: Message[]) => void>
-// declare type Plugin = OptDict<MessageType, [(value: any) => any, MessageType?]>
-

@@ -37,7 +37,7 @@ const parallelLauncher = argv => {
 };
 
 if (isMainThread) {
-    /** @type {PluginFactory} */
+    /** @type {VPluginFactory} */
     module.exports = argv => {
         let launcher;
 

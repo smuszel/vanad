@@ -4,15 +4,16 @@ const progressSelector = (done, diff) => {
     const progressMap = new Map();
     [...done, ...diff].forEach(m => {
         if (m.type === 'jobScheduled') {
-            m.value.forEach(job => (progressMap[job.name] = { job, step: 0 }));
+            m.value.forEach(job => (progressMap[job.name] = { job, step: [] }));
         } else if (m.type === 'testStart') {
-            progressMap[m.value.name].started = true;
+            progressMap[m.value.job.name].started = true;
         } else if (m.type === 'stepSuccess') {
-            progressMap[m.value.name].step += 1;
+            progressMap[m.value.job.name].step.push(m.value.text);
         } else if (m.type === 'stepFailure') {
-            progressMap[m.value.name].failed = true;
+            progressMap[m.value.job.name].failed = true;
+            progressMap[m.value.job.name].reason = m.value.text;
         } else if (m.type === 'testEnd') {
-            progressMap[m.value.name].finished = true;
+            progressMap[m.value.job.name].finished = true;
         }
     });
 

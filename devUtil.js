@@ -2,14 +2,6 @@ const eq = require('util').isDeepStrictEqual;
 const _render = require('util').inspect;
 const render = x => _render(x, { depth: 4, colors: true, compact: true });
 
-const id = x => x;
-const _uncurry = f => (x, y) => f(x)(y);
-const uncurry = (f, n) => (...xs) => {
-    const next = acc => xs => xs.reduce(_uncurry(id), acc);
-    if (n > xs.length) throw new RangeError('too few arguments');
-    return next(f)(xs.slice(0, n));
-};
-
 Array.prototype.map;
 /** @type {Assert} */
 const assert = (curriedFn, xs) => {
@@ -41,9 +33,6 @@ module.exports.runChild = command =>
 
         const child = cp.exec(command);
         const out = [];
-        // setInterval(() => {
-        //     console.log(out);
-        // }, 2000);
         child.stdout && child.stdout.on('data', d => out.push(d.toString()));
         child.on('error', err => {
             rez([err, out]);

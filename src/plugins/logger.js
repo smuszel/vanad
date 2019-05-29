@@ -1,26 +1,36 @@
 const { progressSelector } = require('../selectors');
-
 const frames = ['-', '\\', '|', '/'];
 
-// return history => {
-//     const frame = frames[(i = ++i % frames.length)];
-//     const jobNameMessages = R.groupBy(m => m.type, history);
-//     const lines = R.mapObjIndexed((v, k) => {
-//         const types = v.map(m => m.type);
-//         return renderAdvancedMessageRecord(chalk, k, types, frame);
-//     }, jobNameMessages);
-//     const txt = R.values(lines).join('\n');
+const renderRecord = (colorizer, progress, spiner) => {
+    let colorize;
+    let fix;
+    let post;
+    const last = progress.step[progress.step.length - 1] || '';
 
-// };
+    if (progress.failed) {
+        fix = last;
+        post = progress.reason
+            ? '\n' + progress.reason.messsage + '\n' + progress.reason.stack
+            : '';
+        colorize = colorizer.red;
+    } else if (progress.finished) {
+        fix = '';
+        post = '';
+        colorize = colorizer.green;
+    } else {
+        fix = ' ' + last + ' ' + spiner;
+        post = '';
+        colorize = x => x;
+    }
+
+    const result = (progress.job.name + ' ' + fix).trim();
+    return colorize(result) + post;
+};
 
 /** @type {Dict<VerbosityLevel, () => (progression: Progress[]) => void>} */
 const L = {
-    debug: () => p => {
-        console.log(JSON.stringify(p));
-    },
-    advanced: () => {
+    normal: () => {
         const R = require('ramda');
-        const { renderAdvancedMessageRecord } = require('../helpers/util');
         const chalk = require('chalk');
         //@ts-ignore
         const logUpdate = require('log-update');
@@ -28,22 +38,16 @@ const L = {
         let i = 0;
         return progresses => {
             const frame = frames[(i = ++i % frames.length)];
-            const render = p => renderAdvancedMessageRecord(chalk, p, frame);
+            const render = p => renderRecord(chalk, p, frame);
             const txt = progresses.map(render).join('\n');
 
             logUpdate(txt);
         };
     },
     none: () => () => {},
-    basic: () => {
-        const { renderBasicMessageRecord } = require('../helpers/util');
-        return () => {
-            console.log('ni');
-        };
-    },
 };
 
-/** @type {PluginFactory} */
+/** @type {VPluginFactory} */
 module.exports = argv => {
     const logger = L[argv.verbosity]();
 

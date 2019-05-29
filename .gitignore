@@ -1,3 +1,5 @@
 node_modules/
 .env
 experiment.js
+vanad.json
+./examples/basic-site/**/*

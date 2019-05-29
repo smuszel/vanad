@@ -11,13 +11,12 @@ module.exports.MessageType = {
 
 module.exports.VerbosityLevel = {
     none: 'none',
-    basic: 'headless',
-    advanced: 'remote',
-    debug: 'preview',
+    normal: 'normal',
 };
 
 module.exports.BrowserMode = {
     headless: 'headless',
     remote: 'remote',
     preview: 'preview',
+    none: 'none',
 };

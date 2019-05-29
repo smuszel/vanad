@@ -1,22 +1,27 @@
 /** @type {(argv: ArgVars) => (chanel: Chanel, job: Job) => void} */
 module.exports = argv => {
-    const getBrowser = require('./getBrowser');
-    const _browser = getBrowser(argv.browser);
-    const getContext = () => _browser.then(b => b.createIncognitoBrowserContext());
+    const getLib = require('./getLib')(argv);
 
     return async (chanel, job) => {
-        const context = await getContext();
+        const lib = await getLib();
         const testGenerator = require(job.path);
-        const testIterator = testGenerator({ context, data: job.data });
+        const testIterator = testGenerator({ ...lib, data: job.data });
         /** @param {MessageType} type */
-        const send = type => chanel({ type, value: job });
+        const send = (type, text = '') => chanel({ type, value: { job, text } });
 
         send('testStart');
-        for await (const step of testIterator) {
-            send(step ? 'stepSuccess' : 'stepFailure');
-            if (!step) {
-                break;
+        try {
+            for await (const step of testIterator) {
+                if (step === true) {
+                    send('stepSuccess');
+                } else if (step) {
+                    send('stepSuccess', step);
+                } else {
+                    throw '';
+                }
             }
+        } catch (err) {
+            send('stepFailure', err);
         }
         send('testEnd');
     };
