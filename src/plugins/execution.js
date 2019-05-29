@@ -8,31 +8,44 @@ const parallelMain = () => {
     }
 
     const executionGenerator = jobExecution(workerData);
-    parentPort.on('message', async job => {
-        executionGenerator(msg => parentPort.postMessage(msg), job);
+    parentPort.on('message', job => {
+        executionGenerator(msg => {
+            const reason = msg.value.reason
+                ? { message: msg.value.reason.message, stack: '' }
+                : {};
+            parentPort.postMessage({ ...msg, value: { ...msg.value, reason } });
+        }, job);
     });
 };
 
 /** @type {(argv: ArgVars) => (chanel: Chanel, job: Job) => void} */
 const parallelLauncher = argv => {
     const { Worker } = require('worker_threads');
-    const makeWorker = () => new Worker(__filename, { workerData: argv });
-    const workers = [makeWorker()];
+    let _chanel;
+    const makeWorker = () => {
+        const worker = new Worker(__filename, { workerData: argv });
+        worker.on('message', msg => {
+            _chanel(msg);
+        });
+        return worker;
+    };
+    const workers = Array(+argv.threads)
+        .fill(undefined)
+        .map(makeWorker);
 
     const workerIterator = (function*() {
         let i = 0;
         while (true) {
             yield workers[i];
             i++;
-            i === argv.threads && (i = 0);
-            i === workers.length && workers.push(makeWorker());
+            i === workers.length && (i = 0);
         }
     })();
 
     return (chanel, job) => {
+        _chanel = chanel;
         const worker = workerIterator.next().value;
         worker.postMessage(job);
-        worker.on('message', msg => chanel(msg));
     };
 };
 

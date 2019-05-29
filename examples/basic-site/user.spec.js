@@ -9,7 +9,9 @@ const sel = {
 /** @type {E2ETest<{}>} */
 module.exports = async function*({ context }) {
     const page = await context.newPage();
-    page.goto('http://localhost:5505/site');
+    await page.goto('http://localhost:5505/site');
     yield 'I can see registration link on the landing page';
-    page.$(sel.registrationLink).then(assert);
+    assert(await page.$(sel.registrationLink));
+
+    yield 'end';
 };

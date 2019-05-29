@@ -30,9 +30,7 @@ const renderRecord = (colorizer, progress, spiner) => {
 /** @type {Dict<VerbosityLevel, () => (progression: Progress[]) => void>} */
 const L = {
     normal: () => {
-        const R = require('ramda');
         const chalk = require('chalk');
-        //@ts-ignore
         const logUpdate = require('log-update');
 
         let i = 0;

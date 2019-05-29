@@ -10,6 +10,7 @@
     "version": "0.0.1-alpha",
     "main": "./src/runMain.js",
     "scripts": {
+        "start": "node ./bin/cli",
         "server": "node ./examples/backend.js"
     },
     "author": "smuszel",
@@ -24,12 +25,14 @@
         "index.js"
     ],
     "dependencies": {
-        "chalk": "^2.4.2",
-        "glob": "^7.1.4",
+        "glob": "^7.1.4"
+    },
+    "optionalDependencies": {
         "log-update": "^3.2.0",
         "find-up": "^4.0.0",
-        "puppeteer": "^1.16.0",
-        "yargs": "^13.2.4"
+        "yargs": "^13.2.4",
+        "chalk": "^2.4.2",
+        "puppeteer": "^1.16.0"
     },
     "devDependencies": {
         "@types/dotenv": "^6.1.1",

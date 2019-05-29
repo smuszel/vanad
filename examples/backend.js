@@ -15,7 +15,7 @@ app.get('/site', (_, res) => {
     res.sendFile(resolve('basic-site', 'index.html'));
 });
 
-app.get('/site/frontend', (_, res) => {
+app.get('/frontend.js', (_, res) => {
     res.sendFile(resolve('basic-site', 'frontend.js'));
 });
 

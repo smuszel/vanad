@@ -1,17 +1,5 @@
 ### EE architecture
 
-### 0.0.1 checklist
-
-* [ ] advanced logger
-* [ ] minimum
-* [ ] error handling for worker actions
-* [ ] rcfile & pkgjson
-* [ ] organize dev utils
-* [ ] additional example / test organize / README
-* [ ] travis CI
-* [ ] lint
-* [ ] npm ignore
-
 ### Docs
 
 * [x] there is examples folder

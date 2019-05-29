@@ -2,49 +2,48 @@ const assert = x => {
     if (!x) throw '';
 };
 
+const assertNoValue = el => {
+    if (el.value) throw '';
+};
+
 const sel = {
     loginInput: 'input.login:not(:disabled)',
     passwordInput: 'input.password:not(:disabled)',
     loginButton: 'button.submit:not(:disabled)',
     disabledLoginButton: 'button.submit:disabled',
     disabledLoginInput: 'button.submit:disabled',
-    disabledPasswordInput: 'input.password.submit:disabled',
+    disabledPasswordInput: 'input.password:disabled',
     logoutButton: 'button.logout',
     dashboard: '.dashboard',
-    userList: 'ul.user',
-    userItem: 'li.user',
 };
 
+// use --data.admin to put a value
 /** @typedef {{ admin: string }} Data */
 
 /** @type {E2ETest<Data>} */
-module.exports = async function*({ context }) {
+module.exports = async function*({ context, data }) {
     const page = await context.newPage();
 
-    await page.goto(`http://localhost:5505/site`);
+    await page.goto('http://localhost:5505/site');
     yield 'There is login button on landing page';
-    await page.$(sel.loginButton).then(assert);
+    await assert(page.$(sel.loginButton));
 
-    yield 'I can log in by filling form with credentials';
-    await page.type(sel.loginInput, 'admin');
-    await page.type(sel.passwordInput, 'admin');
+    yield 'I can type my username to login form';
+    await page.type(sel.loginInput, data.admin || 'admin');
+    yield 'I can type my password to login form';
+    await page.type(sel.passwordInput, data.admin || 'admin');
+    yield 'I can log in by clicking submit';
     await page.click(sel.loginButton);
 
-    yield 'While log in for is processed the form is disabled';
-    page.$(sel.disabledLoginButton).then(assert);
-    page.$(sel.disabledLoginInput).then(assert);
-    page.$(sel.disabledPasswordInput).then(assert);
-    await page.waitForNavigation();
-
     yield 'After login I see the dashboard';
-    page.$(sel.logoutButton).then(assert);
-    page.$(sel.dashboard).then(assert);
-    page.$(sel.userList).then(assert);
+    assert(await page.$(sel.logoutButton));
+    assert(await page.$(sel.dashboard));
 
     yield 'I can log out of the dashboard to land on clean form';
     await page.click(sel.logoutButton);
-    await page.waitForNavigation();
-    page.$(sel.loginButton).then(assert);
-    page.$(sel.loginInput).then(assert);
-    page.$(sel.passwordInput).then(assert);
+    assert(await page.$(sel.loginButton));
+    //@ts-ignore
+    assert(await page.$eval(sel.loginInput, el => !el.value));
+
+    yield 'c';
 };

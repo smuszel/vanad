@@ -24,9 +24,11 @@ module.exports = argv => {
         if (jobs && pristine) {
             msg = { type: 'jobScheduled', value: jobs };
             pristine = false;
-        } else if (done.filter(d => d.type === 'testEnd').length === jobs.length) {
+        } else if (jobs && done.filter(d => d.type === 'testEnd').length === jobs.length) {
             msg = { type: 'exit' };
-            process.exit();
+            setTimeout(() => {
+                process.exit();
+            }, 500);
         }
 
         return msg ? [msg] : [];
