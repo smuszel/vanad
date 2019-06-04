@@ -1,1 +1,1 @@
-module.exports = require('./src/runMain');
+module.exports = require('./src/main');

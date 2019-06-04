@@ -1,14 +1,6 @@
 {
     "version": "0.2.0",
     "configurations": [
-
-        {
-            "name": "Test Runner",
-            "type": "node",
-            "request": "launch",
-            "args": ["--inspect-brk=43162", "./bin/cli"],
-            "port": 43162
-        },
         {
             "name": "File",
             "type": "node",
