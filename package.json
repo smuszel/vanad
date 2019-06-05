@@ -19,6 +19,8 @@
     "author": "smuszel",
     "license": "ISC",
     "files": [
+        "src",
+        "index.js",
         "types.d.ts",
         "README.md"
     ],
