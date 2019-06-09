@@ -1,7 +1,5 @@
-// @vanad
-const t = require('../index');
+const t = require('../index')();
 const fn = require('./fn');
-// require('jsdom-global')();
 
 t('Has text click me', t => {
     const btn = fn();

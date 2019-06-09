@@ -1,4 +1,4 @@
-const getCallers = require('./getCallers');
+const getCallers = require('./stackParse');
 const cnc = require('concordance');
 
 const out = caller => {
