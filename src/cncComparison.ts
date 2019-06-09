@@ -1,6 +1,6 @@
-const cnc = require('concordance');
+import cnc from 'concordance';
 
-module.exports = (a, b) => {
+export default (a, b) => {
     const comp = cnc.compare(a, b);
     return comp.pass ? null : cnc.diff(a, b);
 };

@@ -1,5 +1,6 @@
-const t = require('vanad')();
-const core = require('../src/core');
+import vanad from '../src/index';
+import core from '../src/core';
+const t = vanad();
 
 const errMsg = Symbol();
 const comparisonEngine = (a, b) => {

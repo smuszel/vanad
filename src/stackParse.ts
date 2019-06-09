@@ -11,7 +11,7 @@ const parseLine = line => {
     return matches ? createCaller(matches) : matches;
 };
 
-module.exports = ({ stack }) => {
+export default ({ stack }) => {
     return (stack || '')
         .split('\n')
         .map(line => {

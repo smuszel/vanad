@@ -16,7 +16,9 @@
     "main": "./index.js",
     "bin": "./bin/vanad.js",
     "scripts": {
-        "test": "vanad"
+        "start": "babel ./test/core.spec.js",
+        "test": "vanad",
+        "build": "tsc"
     },
     "author": "smuszel",
     "license": "ISC",
@@ -27,14 +29,25 @@
         "types.d.ts",
         "README.md"
     ],
+    "babel": {
+        "plugins": [
+            "@babel/plugin-transform-typescript",
+            "@babel/plugin-transform-modules-commonjs"
+        ]
+    },
     "dependencies": {
         "concordance": "^4.0.0",
-        "yargs": "^13.2.4",
-        "glob": "^7.1.4"
+        "glob": "^7.1.4",
+        "yargs": "^13.2.4"
     },
     "devDependencies": {
-        "@types/jsdom": "^11.0.4",
+        "@babel/cli": "7.4.4",
+        "@babel/core": "^7.4.5",
+        "@babel/plugin-transform-typescript": "^7.4.5",
+        "@babel/plugin-transform-modules-commonjs": "^7.4.4",
+        "@babel/register": "^7.4.4",
         "@types/glob": "^7.1.1",
+        "@types/jsdom": "^11.0.4",
         "@types/node": "^12.0.2",
         "@types/puppeteer": "^1.12.4",
         "typescript": "^3.5.1",

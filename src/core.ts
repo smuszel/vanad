@@ -1,4 +1,4 @@
-module.exports = (comparisonEngine, stackParser, logger) => {
+export default (comparisonEngine, stackParser, logger) => {
     const compare = title => (a, b) => {
         const diff = comparisonEngine(a, b);
         const caller = stackParser(new Error());
