@@ -29,7 +29,6 @@
         "prep": "yarn typegen && yarn prettify && yarn lint && yarn test && yarn build"
     },
     "files": [
-        "src",
         "bin",
         "dist",
         "types",
