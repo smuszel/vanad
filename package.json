@@ -21,7 +21,6 @@
     "bin": "./bin/vanad.js",
     "scripts": {
         "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
-        "prebuild": "rimraf dist",
         "build": "rollup -c rollup.config.js",
         "prettify": "prettier ./**/*.ts --write",
         "test": "node ./bin/vanad.js --babel",
