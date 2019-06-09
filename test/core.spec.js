@@ -1,5 +1,4 @@
-// @vanad
-const t = require('vanad');
+const t = require('vanad')();
 const core = require('../src/core');
 
 const errMsg = Symbol();

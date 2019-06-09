@@ -3,7 +3,7 @@
     "description": "Experimental Testing framework.",
     "keywords": [
         "testing",
-        "puppeteer",
+        "vanad",
         "e2e",
         "unit"
     ],
@@ -12,13 +12,17 @@
         "type": "git",
         "url": "https://github.com/smuszel/vanad"
     },
-    "version": "0.0.3",
+    "version": "0.0.1",
     "main": "./index.js",
-    "scripts": {},
+    "bin": "./bin/vanad.js",
+    "scripts": {
+        "test": "vanad"
+    },
     "author": "smuszel",
     "license": "ISC",
     "files": [
         "src",
+        "bin",
         "index.js",
         "types.d.ts",
         "README.md"
@@ -34,6 +38,6 @@
         "@types/node": "^12.0.2",
         "@types/puppeteer": "^1.12.4",
         "typescript": "^3.5.1",
-        "vanad": "^0.0.3-alpha"
+        "vanad": "^0.0.1"
     }
 }

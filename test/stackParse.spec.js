@@ -1,5 +1,4 @@
-// @vanad
-const t = require('vanad');
+const t = require('vanad')();
 const stackParse = require('../src/stackParse');
 
 const normalStack = `

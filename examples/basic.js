@@ -7,7 +7,3 @@ test('Should pass', c => {
 test('Should fail', c => {
     c(1, 2);
 });
-
-// test('Should fail', c => {
-//     c(1, 2);
-// });
