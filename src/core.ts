@@ -1,16 +1,20 @@
-export default (comparisonEngine, stackParser, logger) => {
-    const compare = title => (a, b) => {
+import { RuntimeOptions, Compare } from '../types/internal';
+
+export default ({ comparisonEngine, stackParser, logger }: RuntimeOptions) => {
+    const compare: (title: string) => Compare = title => (a, b) => {
         const diff = comparisonEngine(a, b);
-        const caller = stackParser(new Error());
-        const message = { caller, diff, title };
+        const callers = stackParser(new Error());
+        const message = { callers, diff, title };
         logger(message);
+        return diff;
     };
-    return (title, cb) => {
+
+    return (title: string, cb: (c: Compare) => void) => {
         try {
             cb(compare(title));
         } catch (err) {
-            const caller = stackParser(err);
-            logger({ diff: err.message, caller, title });
+            const callers = stackParser(err);
+            logger({ callers, diff: err.message, title });
         }
     };
 };

@@ -8,6 +8,13 @@
         "strict": true,
         "noImplicitAny": false,
         "strictNullChecks": true,
-        "forceConsistentCasingInFileNames": true
-    }
+        "forceConsistentCasingInFileNames": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "declarationDir": "./types"
+    },
+    "include": [
+        "./types/**/*",
+        "./src/**/*"
+    ]
 }

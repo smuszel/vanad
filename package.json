@@ -13,28 +13,30 @@
         "url": "https://github.com/smuszel/vanad"
     },
     "version": "0.0.1",
-    "main": "./index.js",
-    "bin": "./bin/vanad.js",
-    "scripts": {
-        "start": "babel ./test/core.spec.js",
-        "test": "vanad",
-        "build": "tsc"
-    },
     "author": "smuszel",
     "license": "ISC",
+    "main": "./dist/index.js",
+    "module": "./dist/index.es.js",
+    "types": "./types/index.ts",
+    "bin": "./bin/vanad.js",
+    "scripts": {
+        "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+        "prebuild": "rimraf dist",
+        "build": "rollup -c rollup.config.js",
+        "prettify": "prettier ./**/*.ts --write",
+        "test": "node ./bin/vanad.js --babel",
+        "typegen": "tsc",
+        "clean": "rimraf dist",
+        "prep": "yarn typegen && yarn prettify && yarn lint && yarn test && yarn build"
+    },
     "files": [
         "src",
         "bin",
+        "dist",
+        "types",
         "index.js",
-        "types.d.ts",
         "README.md"
     ],
-    "babel": {
-        "plugins": [
-            "@babel/plugin-transform-typescript",
-            "@babel/plugin-transform-modules-commonjs"
-        ]
-    },
     "dependencies": {
         "concordance": "^4.0.0",
         "glob": "^7.1.4",
@@ -43,14 +45,23 @@
     "devDependencies": {
         "@babel/cli": "7.4.4",
         "@babel/core": "^7.4.5",
-        "@babel/plugin-transform-typescript": "^7.4.5",
         "@babel/plugin-transform-modules-commonjs": "^7.4.4",
+        "@babel/plugin-transform-typescript": "^7.4.5",
         "@babel/register": "^7.4.4",
         "@types/glob": "^7.1.1",
         "@types/jsdom": "^11.0.4",
         "@types/node": "^12.0.2",
         "@types/puppeteer": "^1.12.4",
-        "typescript": "^3.5.1",
-        "vanad": "^0.0.1"
+        "prettier": "^1.18.2",
+        "rimraf": "^2.6.3",
+        "rollup": "^1.14.4",
+        "rollup-plugin-babel": "^4.3.2",
+        "rollup-plugin-commonjs": "^10.0.0",
+        "rollup-plugin-json": "^4.0.0",
+        "rollup-plugin-node-resolve": "^5.0.1",
+        "tslint": "^5.17.0",
+        "tslint-config-prettier": "^1.18.0",
+        "tslint-config-standard": "^8.0.1",
+        "typescript": "^3.5.1"
     }
 }

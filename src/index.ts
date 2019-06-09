@@ -1,6 +1,8 @@
-import logger from './logger';
+import loggers from './loggers';
 import core from './core';
-import cnc from './cncComparison';
-import stackParse from './stackParse';
+import comparisonEngine from './cncComparison';
+import stackParser from './stackParser';
 
-export default () => core(cnc, stackParse, logger);
+const logger = loggers[global['verbosity'] || 'basic'];
+
+export default core({ comparisonEngine, stackParser, logger });

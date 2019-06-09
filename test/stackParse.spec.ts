@@ -1,6 +1,5 @@
-import vanad from '../src/index';
-import stackParse from '../src/stackParse';
-const t = vanad();
+import t from '../src/index';
+import stackParse from '../src/stackParser';
 
 const normalStack = `
 Error
