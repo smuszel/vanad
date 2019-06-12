@@ -1,5 +1,6 @@
 ### TODOS for stable release 1.0.0
 
+* [ ] better logging
 * [ ] vscode extension update to 0.0.2 core
 * [ ] lerna
 * [ ] jsdom integration

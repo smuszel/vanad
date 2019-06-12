@@ -39,24 +39,6 @@ t('Failed comparison is logged', c => {
     ]);
 });
 
-t('Errors at comparison execution are treateated as failures', c => {
-    const _logger = loggerFactory();
-    const logger = _logger.log;
-    const regularCore = core({ comparisonEngine, stackParser, logger });
-    regularCore('test1', c => c(1, 1));
-    regularCore('test2', c => c(1, 2));
-    regularCore('test3', c => {
-        throw new Error('test err');
-    });
-    regularCore('test4', c => c(1, 2));
-    c(_logger.curr, [
-        { callers, diff: null, title: 'test1' },
-        { callers, diff: errMsg, title: 'test2' },
-        { callers, diff: 'test err', title: 'test3' },
-        { callers, diff: errMsg, title: 'test4' },
-    ]);
-});
-
 t('Comparison can be async', c => {
     const _logger = loggerFactory();
     const logger = _logger.log;

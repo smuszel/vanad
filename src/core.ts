@@ -10,11 +10,6 @@ export default ({ comparisonEngine, stackParser, logger }: RuntimeOptions) => {
     };
 
     return (title: string, cb: (c: Compare) => void) => {
-        try {
-            cb(compare(title));
-        } catch (err) {
-            const callers = stackParser(err);
-            logger({ callers, diff: err.message, title });
-        }
+        cb(compare(title));
     };
 };
