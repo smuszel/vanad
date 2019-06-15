@@ -11,7 +11,7 @@ const main = () => {
         .option('verbosity', { alias: 'v', default: 'basic', choices: ['basic', 'full'] })
         .option('pattern', {
             alias: 'p',
-            default: './**/*.spec.*',
+            default: '{,./!(node_modules)/**/*.spec.*}',
         }).argv;
 
     if (babel) {
