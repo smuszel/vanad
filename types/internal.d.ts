@@ -11,7 +11,7 @@ export type ComparisonResult = {
 
 export type Diff = string | null;
 export type Compare = <T>(a: T, b: T) => Diff;
-export type Verbosity = 'basic' | 'full';
+export type Verbosity = 'basic' | 'process' | 'ensure';
 
 export type StackParser = (err: { stack?: string }) => Caller[];
 export type ComparisonEngine = <T>(a: T, b: T) => Diff;

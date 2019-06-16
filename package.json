@@ -23,7 +23,7 @@
         "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
         "build": "rollup -c rollup.config.js",
         "prettify": "prettier ./**/*.ts --write",
-        "test": "node ./bin/vanad.js --babel",
+        "test": "node ./bin/vanad.js --babel --watch",
         "typegen": "tsc",
         "clean": "rimraf dist",
         "prep": "yarn typegen && yarn prettify && yarn lint && yarn test && yarn build"
@@ -36,9 +36,10 @@
         "README.md"
     ],
     "dependencies": {
+        "chokidar": "^3.0.1",
         "concordance": "^4.0.0",
         "glob": "^7.1.4",
-        "yargs": "^13.2.4"
+        "mri": "^1.1.4"
     },
     "devDependencies": {
         "@babel/cli": "7.4.4",
