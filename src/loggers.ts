@@ -1,22 +1,14 @@
-import { Logger, Verbosity } from '../types/internal';
+import { Logger } from '../types/internal';
 
-const loggers: Record<Verbosity, Logger> = {
-    process: comparisonResult => {
-        const send = process.send;
-        send && send(comparisonResult);
-    },
-    basic: comparisonResult => {
-        if (comparisonResult.diff) {
-            console.log(comparisonResult.title);
-            console.log(comparisonResult.callers[2]);
-            console.log(comparisonResult.diff);
-        }
-    },
-    ensure: comparisonResult => {
-        if (comparisonResult) {
-            process.exit(1);
-        }
-    },
+const logger: Logger = message => {
+    if (process.send) {
+        process.send(message);
+    } else if (message.diff) {
+        console.log(message.title);
+        console.log(message.callers[1]);
+        console.log(message.diff);
+        process.exit(1);
+    }
 };
 
-export default loggers;
+export default logger;

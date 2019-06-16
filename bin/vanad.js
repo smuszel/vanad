@@ -1,68 +1,120 @@
 const glob = require('glob');
 const path = require('path');
 const mri = require('mri');
-
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx'];
+const polyfill = () => require('@babel/register')({ extensions });
 
 const main = () => {
-    const { pattern, cwd, babel, verbosity, watch } = mri(process.argv.slice(2), {
+    const { cwd, babel, watch } = mri(process.argv.slice(2), {
         alias: {
             c: 'cwd',
             b: 'babel',
-            p: 'pattern',
-            v: 'verbosity',
             w: 'watch',
         },
         default: {
             c: process.cwd(),
             b: false,
-            p: '{,./!(node_modules)/**/*.spec.js}',
-            v: 'basic',
             w: false,
         },
         boolean: ['b', 'w'],
     });
 
-    if (babel) {
-        require('@babel/register')({ extensions });
-    }
+    babel && polyfill();
 
-    global['verbosity'] = verbosity;
-
-    const watchRun = () => {
+    const prepWatch = () => {
         const chokidar = require('chokidar');
-        const getCachePaths = () => {
-            return Object.keys(require.cache).filter(x => !x.includes('node_modules'));
-        };
+        const esc = require('ansi-escapes');
+        let current;
+        let history;
 
-        let watcher;
-
-        const reset = changedPath => {
-            const mod = require.resolve(changedPath);
-            if (mod) {
-                delete require.cache[mod];
-                require(changedPath);
-                watcher.close();
-                watcher = createWatcher();
+        const mockSend = message => {
+            history.push(message);
+            if (message.diff) {
+                console.log(message.title);
+                console.log(message.callers[1]);
+                console.log(message.diff);
             }
         };
 
-        createWatcher = () => {
-            const ps = getCachePaths();
-            return chokidar.watch(ps, { cwd }).on('all', (name, filePath) => {
-                if (name === 'change') {
-                    console.log('change');
-                    reset(path.join(cwd, filePath));
-                }
+        const getResult = () => {
+            const byTitle = {};
+            history.forEach(message => {
+                const prev = byTitle[message.title] || [];
+                byTitle[message.title] = [...prev, message];
+            });
+
+            return Object.keys(byTitle).every(title => {
+                const group = byTitle[title];
+                const allFinished = group.length === group[0].total;
+
+                return allFinished;
             });
         };
 
-        watcher = createWatcher();
+        const _run = () => {
+            if (!current) {
+                history = [];
+                clearStd();
+                process.stdout.write(esc.cursorHide);
+                clearTests();
+                return run()
+                    .then(() => {
+                        return new Promise(rez => {
+                            const i = setInterval(() => {
+                                if (getResult()) {
+                                    clearInterval(i);
+                                    rez();
+                                }
+                            }, 50);
+                        });
+                    })
+                    .then(() => {
+                        process.stdout.write(esc.cursorShow);
+                        current = null;
+                    });
+            }
+        };
+
+        const clearCache = dirname => () => {
+            const frag = path.join(cwd, dirname);
+            const modulePaths = Object.keys(require.cache).filter(p => p.includes(frag));
+            modulePaths.forEach(p => {
+                delete require.cache[require.resolve(p)];
+            });
+        };
+
+        const clearSources = clearCache('src');
+        const clearTests = clearCache('test');
+
+        const clearStd = () => {
+            process.stdout.write(esc.clearTerminal);
+        };
+
+        chokidar
+            .watch('src', { cwd, ignoreInitial: true })
+            .on('all', (name, filePath) => {
+                if (name === 'change' || name === 'unlink') {
+                    clearSources();
+                    _run();
+                }
+            });
+
+        chokidar
+            .watch('test/**/*.spec.*', { cwd, ignoreInitial: true })
+            .on('all', (name, filePath) => {
+                if (name === 'change' || name === 'add') {
+                    _run();
+                }
+            });
+
+        !process.send && (process.send = mockSend);
+        const first = _run();
+        current = first;
     };
 
     const run = () => {
         return new Promise(rez => {
-            glob(pattern, { cwd }, (_, testFiles) => {
+            glob('test/**/*.spec.*', { cwd }, (_, testFiles) => {
                 testFiles.forEach(tf => {
                     const fullPath = path.join(cwd, tf);
                     require(fullPath);
@@ -72,9 +124,7 @@ const main = () => {
         });
     };
 
-    run().then(() => {
-        watch && watchRun();
-    });
+    watch ? prepWatch() : run();
 };
 
 main();

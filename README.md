@@ -1,13 +1,12 @@
 ### TODOS for stable release 1.0.0
 
+<!--  -->
 
-* [x] use lightweight parser for args
-* [x] add watch flag
-* [x] add handling of watch
-* [ ] stop bailing the process on basic logger
-* [ ] use message passing for full logger
-* [ ] cache invalidation after run
-* [ ] update ext
+* [ ] lerna
+* [ ] analyze ast to get n of comparison
+* [ ] invalidate only the needed sources/tests
+* [ ] richer log
+
 <!-- * [ ] better logging
 * [ ] vscode extension update to 0.0.2 core
 * [ ] lerna

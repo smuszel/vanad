@@ -5,9 +5,8 @@
             "name": "File",
             "type": "node",
             "request": "launch",
-            "args": ["--inspect-brk=43162", "${file}"],
+            "args": ["--inspect-brk=43162", "${file}", "--babel", "--watch"],
             "port": 43162
         }
-        
     ]
 }
