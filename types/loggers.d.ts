@@ -1,3 +1,3 @@
-import { Logger, Verbosity } from '../types/internal';
-declare const loggers: Record<Verbosity, Logger>;
-export default loggers;
+import { Logger } from '../types/internal';
+declare const logger: Logger;
+export default logger;
