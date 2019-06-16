@@ -48,7 +48,7 @@ t('Extracts nested stacks', c => {
 t('Omits internal modules', c => {
     c(stackParse({ stack: internalsStack }), [
         { path: 'D:\\Repos\\vanad\\x.js', line: 2 },
-        { path: 'D:\\Repos\\vanad\\x.js', line: 117 },
+        { path: 'D:\\Repos\\vanad\\x.js', line: 116 },
         { path: 'D:\\Repos\\vanad\\y.js', line: 2 },
     ]);
 });

@@ -27,6 +27,10 @@ const main = () => {
         let current;
         let history;
 
+        process.on('exit', () => {
+            console.log(esc.cursorShow);
+        });
+
         const mockSend = message => {
             history.push(message);
             if (message.diff) {
@@ -87,21 +91,19 @@ const main = () => {
         const clearTests = clearCache('test');
 
         const clearStd = () => {
-            process.stdout.write(esc.clearTerminal);
+            process.stdout.write(esc.clearScreen);
         };
 
-        chokidar
-            .watch('src', { cwd, ignoreInitial: true })
-            .on('all', (name, filePath) => {
-                if (name === 'change' || name === 'unlink') {
-                    clearSources();
-                    _run();
-                }
-            });
+        chokidar.watch('src', { cwd, ignoreInitial: true }).on('all', name => {
+            if (name === 'change' || name === 'unlink') {
+                clearSources();
+                _run();
+            }
+        });
 
         chokidar
             .watch('test/**/*.spec.*', { cwd, ignoreInitial: true })
-            .on('all', (name, filePath) => {
+            .on('all', name => {
                 if (name === 'change' || name === 'add') {
                     _run();
                 }
