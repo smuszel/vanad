@@ -3,5 +3,4 @@ import core from './core';
 import comparisonEngine from './cncComparison';
 import stackParser from './stackParser';
 
-export const test = core({ comparisonEngine, stackParser, logger });
-export default test;
+export default core({ comparisonEngine, stackParser, logger });
